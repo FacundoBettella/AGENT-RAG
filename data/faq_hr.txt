@@ -1,0 +1,116 @@
+PREGUNTAS FRECUENTES — RECURSOS HUMANOS
+HR SaaS Company | Documentación Interna v2.1
+========================================
+
+
+SECCIÓN 1: REMUNERACIÓN Y LIQUIDACIÓN
+======================================
+
+¿Cuándo se paga el sueldo?
+Los salarios se acreditan el último día hábil de cada mes. Si ese día cae en fin de semana o feriado, el pago se adelanta al último día hábil anterior. El pago se realiza mediante transferencia bancaria a la cuenta informada en el sistema de RRHH.
+
+¿Cómo accedo a mi recibo de sueldo?
+Los recibos digitales están disponibles en el portal de empleados (hr.company.com) dentro de las 48 horas posteriores a la acreditación del salario. Podés descargarlos en formato PDF desde la sección "Mis Documentos". El recibo tiene validez legal sin firma física.
+
+¿Qué es el SAC y cuándo se cobra?
+El SAC (Sueldo Anual Complementario) equivale al 50% del mejor salario mensual del semestre. Se abona en dos cuotas: la primera el 30 de junio y la segunda el 31 de diciembre de cada año. En caso de egreso, se liquida proporcionalmente al tiempo trabajado en el semestre.
+
+¿Puedo solicitar un adelanto de sueldo?
+Sí. Podés solicitar un adelanto de hasta el 50% de tu salario neto una vez por semestre. La solicitud debe hacerse con al menos 5 días hábiles de anticipación a través del portal de RRHH, sección "Solicitudes". El adelanto se descuenta automáticamente en la liquidación del mes en curso.
+
+¿Cómo se calculan las horas extra?
+Las horas trabajadas de lunes a sábado fuera del horario acordado se pagan con un recargo del 50% sobre el valor hora. Las horas extra en domingo o feriados tienen un recargo del 100%. Deben ser autorizadas previamente por el responsable del área y cargadas en el sistema dentro de las 48 horas de realizadas.
+
+
+SECCIÓN 2: VACACIONES Y LICENCIAS
+====================================
+
+¿Cuántos días de vacaciones me corresponden?
+Los días de vacaciones dependen de la antigüedad:
+- Menos de 5 años: 14 días hábiles
+- Entre 5 y 10 años: 21 días hábiles
+- Entre 10 y 20 años: 28 días hábiles
+- Más de 20 años: 35 días hábiles
+
+¿Cómo solicito mis vacaciones?
+Las vacaciones deben solicitarse con un mínimo de 15 días de anticipación a través del portal de empleados, sección "Solicitar Vacaciones". El responsable del área tiene 5 días hábiles para aprobar o rechazar la solicitud. Una vez aprobadas, recibirás una notificación por email y el período quedará bloqueado en el calendario del equipo.
+
+¿Puedo fraccionar mis vacaciones?
+Sí, siempre que uno de los períodos no sea inferior a 14 días corridos. El resto puede tomarse en fracciones de mínimo 3 días hábiles consecutivos. Las fracciones deben acordarse con el responsable del área con la misma anticipación que las vacaciones completas.
+
+¿Qué pasa si no tomo las vacaciones en el año?
+Las vacaciones no tomadas durante el año pueden trasladarse hasta el 30 de abril del año siguiente. Pasada esa fecha, se pierden salvo acuerdo escrito con RRHH. No se abonan vacaciones no gozadas excepto en caso de egreso de la empresa.
+
+¿Cuántos días de licencia por enfermedad tengo?
+Los empleados tienen derecho a licencia paga por enfermedad inculpable de:
+- Hasta 3 meses con menos de 5 años de antigüedad
+- Hasta 6 meses con 5 o más años de antigüedad
+Para acceder a la licencia se debe presentar certificado médico dentro de las 24 horas de la ausencia. El médico de la empresa puede realizar visitas domiciliarias de verificación.
+
+¿Cuál es la licencia por maternidad?
+La licencia por maternidad es de 90 días corridos, que pueden distribuirse entre 30 días antes y 60 días después del parto, o 45 y 45. Es obligatorio tomar al menos 30 días antes de la fecha probable de parto. Durante la licencia se percibe el salario completo a cargo de la empresa.
+
+¿Cuál es la licencia por paternidad?
+Los padres tienen derecho a 15 días corridos de licencia paga a partir del nacimiento. Debe notificarse a RRHH con al menos 30 días de anticipación a la fecha probable de parto. Para parejas del mismo sexo, la distribución de los días se acuerda con RRHH según el rol en el proceso de adopción o gestación.
+
+¿Qué licencias especiales existen?
+- Matrimonio: 10 días hábiles
+- Fallecimiento de cónyuge, hijo o padre/madre: 5 días hábiles
+- Fallecimiento de hermano: 3 días hábiles
+- Examen universitario: 2 días hábiles por examen, máximo 10 días al año
+- Mudanza: 1 día hábil por año
+- Donación de sangre: el día del turno con comprobante
+
+
+SECCIÓN 3: MODALIDAD DE TRABAJO
+=================================
+
+¿Cuál es la política de trabajo remoto?
+La empresa opera bajo modalidad híbrida. Los empleados pueden trabajar de forma remota hasta 3 días por semana, debiendo asistir al menos 2 días presenciales. Los días presenciales los define cada área con su responsable. Las semanas con eventos de empresa o reuniones de equipo requieren presencialidad completa.
+
+¿Puedo trabajar desde otra ciudad o país?
+El trabajo remoto desde otra ciudad dentro del país está permitido con notificación previa a RRHH. El trabajo desde el exterior requiere aprobación del área y de RRHH con al menos 30 días de anticipación, y no puede extenderse más de 30 días corridos por año. Pueden aplicar restricciones impositivas según el país de destino.
+
+¿Cuál es el horario de trabajo?
+El horario estándar es de 9:00 a 18:00 con una hora de almuerzo. Algunas áreas operan bajo esquema de flexibilidad horaria, donde el empleado puede elegir su horario de entrada entre las 8:00 y las 10:00. En todos los casos la jornada es de 8 horas efectivas. Consultá con tu responsable si tu área aplica flexibilidad.
+
+¿La empresa provee equipamiento para trabajo remoto?
+La empresa provee laptop y auriculares para todos los empleados. Para trabajo remoto, se otorga un subsidio mensual de conectividad de $5.000 que se acredita junto con el salario. Los empleados con más de 2 años de antigüedad pueden solicitar una silla ergonómica para su domicilio a través del portal de RRHH.
+
+
+SECCIÓN 4: BENEFICIOS Y DESARROLLO
+=====================================
+
+¿Qué cobertura médica tiene la empresa?
+La empresa cubre el 100% de la prepaga para el empleado y el 70% para el grupo familiar (cónyuge e hijos hasta 25 años). Las opciones disponibles son Swiss Medical, Medifé y OSDE. El cambio de plan puede realizarse en enero de cada año o ante un cambio de situación familiar. Para incorporar un familiar, completar el formulario en el portal de RRHH dentro de los 30 días del evento.
+
+¿Existe algún beneficio para capacitación?
+Sí. Cada empleado cuenta con un presupuesto anual de $150.000 para capacitación. Puede utilizarse en cursos, certificaciones, libros técnicos o conferencias relacionadas con el rol. La solicitud debe aprobarse con el responsable del área antes de la compra. Los cursos de más de $50.000 requieren aprobación adicional de RRHH.
+
+¿Cómo funciona el programa de referidos?
+Si referís a una persona que es contratada, recibís un bono de $80.000 a los 3 meses de ingreso del referido. El referido debe indicar tu nombre en el proceso de selección. No aplica para posiciones de dirección ni para referidos que ya estén en proceso de selección activo.
+
+¿Hay evaluaciones de desempeño?
+Sí. Las evaluaciones se realizan dos veces al año: en junio y en diciembre. Incluyen autoevaluación, evaluación del responsable y, para roles senior, evaluación 360. Los resultados impactan en los ajustes salariales y promociones del ciclo siguiente. El proceso completo se gestiona desde el módulo de Performance del portal de RRHH.
+
+¿Cuándo se realizan los ajustes salariales?
+Los ajustes salariales se aplican en febrero y agosto de cada año, vinculados a los resultados de las evaluaciones de desempeño de diciembre y junio respectivamente. Los porcentajes de ajuste los define el comité de compensaciones según el desempeño individual y las condiciones del mercado.
+
+
+SECCIÓN 5: INGRESO Y EGRESO
+==============================
+
+¿Qué documentación necesito presentar al ingresar?
+En el primer día debés presentar: DNI original, CUIL, CBU de cuenta bancaria a tu nombre, título o certificado analítico (si aplica al rol), libreta de matrimonio o acta de nacimiento de hijos (para carga de familiares). Toda la documentación se gestiona digitalmente a través del portal de onboarding que recibirás por email antes de tu primer día.
+
+¿Cómo es el proceso de onboarding?
+El onboarding tiene una duración de 30 días. La primera semana incluye sesiones de inducción corporativa, presentación con el equipo y configuración de accesos. Las semanas 2 a 4 son de onboarding técnico en el área. Al finalizar el mes, el responsable y el empleado completan una encuesta de onboarding para detectar oportunidades de mejora.
+
+¿Qué es el período de prueba?
+Los primeros 3 meses de relación laboral son período de prueba. Durante ese período, cualquiera de las partes puede disolver el vínculo sin expresión de causa y sin obligación de preavisar ni indemnizar. Al finalizar el período de prueba, la relación se consolida automáticamente.
+
+¿Cómo se calcula la indemnización por despido?
+La indemnización equivale a un mes de salario por año trabajado (o fracción mayor a 3 meses), tomando como base el mejor salario mensual normal y habitual del último año. A esto se suma el preaviso (1 mes si la antigüedad es menor a 5 años, 2 meses si es mayor) y la parte proporcional del SAC y vacaciones no gozadas.
+
+¿Qué debo hacer si decido renunciar?
+Debés notificar tu renuncia por escrito con 30 días de anticipación (preaviso). La carta de renuncia puede enviarse por email a rrhh@company.com o entregarse en papel en la oficina de RRHH. Durante el preaviso, seguís percibiendo tu salario normal. Al finalizar, se te liquidarán los días trabajados, vacaciones proporcionales y SAC proporcional.
