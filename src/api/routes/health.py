@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from m2project.api.schemas import HealthResponse
+from api.schemas import HealthResponse
 
 router = APIRouter()
 

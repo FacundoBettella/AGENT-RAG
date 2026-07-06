@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from m2project.domain.models import FAQDocument
+from domain.models import FAQDocument
 
 
 class TextLoader:

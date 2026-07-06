@@ -25,7 +25,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     uvicorn.run(
-        "m2project.api.main:app",
+        "api.main:app",
         host=args.host,
         port=args.port,
         reload=args.reload,

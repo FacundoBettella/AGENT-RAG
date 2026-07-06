@@ -3,8 +3,8 @@ from pathlib import Path
 import chromadb
 from chromadb.config import Settings
 
-from m2project.domain.models import Chunk, RetrievedChunk
-from m2project.ports.embedder import Embedder
+from domain.models import Chunk, RetrievedChunk
+from ports.embedder import Embedder
 
 
 class ChromaStore:

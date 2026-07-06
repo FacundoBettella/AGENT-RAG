@@ -1,9 +1,9 @@
-from m2project.domain.exceptions import ContentBlockedError
-from m2project.domain.moderation import ModerationAction
-from m2project.domain.models import RAGResponse, RetrievedChunk
-from m2project.ports.llm import LLMClient
-from m2project.services.moderation_service import ModerationService
-from m2project.services.retriever import Retriever
+from domain.exceptions import ContentBlockedError
+from domain.moderation import ModerationAction
+from domain.models import RAGResponse, RetrievedChunk
+from ports.llm import LLMClient
+from services.moderation_service import ModerationService
+from services.retriever import Retriever
 
 _SYSTEM_PROMPT = (
     "Eres un asistente de soporte para una empresa de HR SaaS. "

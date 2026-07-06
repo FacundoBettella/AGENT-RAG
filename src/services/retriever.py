@@ -1,5 +1,5 @@
-from m2project.domain.models import RetrievedChunk
-from m2project.ports.vector_store import VectorStore
+from domain.models import RetrievedChunk
+from ports.vector_store import VectorStore
 
 
 class Retriever:

@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from m2project.domain.exceptions import ContentBlockedError
+from domain.exceptions import ContentBlockedError
 
 
 async def content_blocked_handler(_request: Request, exc: ContentBlockedError) -> JSONResponse:

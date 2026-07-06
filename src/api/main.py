@@ -5,9 +5,9 @@ from fastapi import FastAPI
 
 load_dotenv()
 
-from m2project.api.exception_handlers import register_handlers
-from m2project.api.routes import evaluate, health, ingest, query
-from m2project.factory import build_faq_bundle
+from api.exception_handlers import register_handlers
+from api.routes import evaluate, health, ingest, query
+from factory import build_faq_bundle
 
 
 @asynccontextmanager

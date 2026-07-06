@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from m2project.api.schemas import IngestRequest, IngestResponse
+from api.schemas import IngestRequest, IngestResponse
 
 router = APIRouter()
 

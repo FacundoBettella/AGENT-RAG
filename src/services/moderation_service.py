@@ -17,10 +17,10 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from m2project.domain.moderation import ModerationAction
+from domain.moderation import ModerationAction
 
 if TYPE_CHECKING:
-    from m2project.ports.log_repository import LogRepository
+    from ports.log_repository import LogRepository
 
 # --- Regex patterns for sensitive data (Layer 1) ---
 _CREDIT_CARD_RE = re.compile(

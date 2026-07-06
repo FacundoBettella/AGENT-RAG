@@ -1,5 +1,5 @@
 from typing import Protocol
-from m2project.domain.models import FAQDocument
+from domain.models import FAQDocument
 
 
 class DocumentLoader(Protocol):

@@ -4,8 +4,8 @@ from pathlib import Path
 import faiss
 import numpy as np
 
-from m2project.domain.models import Chunk, RetrievedChunk
-from m2project.ports.embedder import Embedder
+from domain.models import Chunk, RetrievedChunk
+from ports.embedder import Embedder
 
 
 class FAISSStore:

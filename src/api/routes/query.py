@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from m2project.api.schemas import QueryResponse, QuestionRequest
+from api.schemas import QueryResponse, QuestionRequest
 
 router = APIRouter()
 

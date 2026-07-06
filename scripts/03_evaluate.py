@@ -20,7 +20,7 @@ load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from m2project.factory import build_faq_bundle
+from factory import build_faq_bundle
 
 DEFAULT_QUESTION = "¿Cómo solicito vacaciones?"
 

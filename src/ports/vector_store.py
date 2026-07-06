@@ -1,5 +1,5 @@
 from typing import Protocol
-from m2project.domain.models import Chunk, RetrievedChunk
+from domain.models import Chunk, RetrievedChunk
 
 
 class VectorStore(Protocol):

@@ -4,16 +4,16 @@ import os
 from dataclasses import dataclass
 from typing import Literal
 
-from m2project.adapters.chroma_store import ChromaStore
-from m2project.adapters.json_log import JsonLogRepository
-from m2project.adapters.openai_embedder import OpenAIEmbedder
-from m2project.adapters.openai_llm import OpenAILLMClient
-from m2project.adapters.text_loader import TextLoader
-from m2project.services.chunker import Chunker
-from m2project.services.indexer import Indexer
-from m2project.services.moderation_service import ModerationEvaluator, ModerationService
-from m2project.services.pipeline import RAGPipeline
-from m2project.services.retriever import Retriever
+from adapters.chroma_store import ChromaStore
+from adapters.json_log import JsonLogRepository
+from adapters.openai_embedder import OpenAIEmbedder
+from adapters.openai_llm import OpenAILLMClient
+from adapters.text_loader import TextLoader
+from services.chunker import Chunker
+from services.indexer import Indexer
+from services.moderation_service import ModerationEvaluator, ModerationService
+from services.pipeline import RAGPipeline
+from services.retriever import Retriever
 
 
 @dataclass
@@ -39,7 +39,7 @@ def build_faq_bundle(
     embedder = OpenAIEmbedder(model=embedding_model, api_key=api_key)
 
     if vector_store == "faiss":
-        from m2project.adapters.faiss_store import FAISSStore
+        from adapters.faiss_store import FAISSStore
         store = FAISSStore(embedder=embedder, persist_path=".faiss")
     else:
         store = ChromaStore(

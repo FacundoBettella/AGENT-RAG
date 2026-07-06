@@ -16,7 +16,7 @@ load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from m2project.factory import build_faq_bundle
+from factory import build_faq_bundle
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 

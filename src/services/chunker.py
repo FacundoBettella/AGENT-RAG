@@ -1,4 +1,4 @@
-from m2project.domain.models import Chunk, FAQDocument
+from domain.models import Chunk, FAQDocument
 
 
 class Chunker:

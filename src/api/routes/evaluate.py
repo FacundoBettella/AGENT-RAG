@@ -2,8 +2,8 @@ import json
 
 from fastapi import APIRouter, Request
 
-from m2project.api.schemas import EvaluateResponse, QuestionRequest
-from m2project.domain.models import RAGResponse
+from api.schemas import EvaluateResponse, QuestionRequest
+from domain.models import RAGResponse
 
 router = APIRouter()
 

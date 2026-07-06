@@ -1,7 +1,7 @@
-from m2project.domain.models import FAQDocument
-from m2project.ports.loader import DocumentLoader
-from m2project.ports.vector_store import VectorStore
-from m2project.services.chunker import Chunker
+from domain.models import FAQDocument
+from ports.loader import DocumentLoader
+from ports.vector_store import VectorStore
+from services.chunker import Chunker
 
 
 class Indexer:
