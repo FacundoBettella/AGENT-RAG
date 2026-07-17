@@ -1,3 +1,6 @@
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
 from domain.exceptions import ContentBlockedError
 from domain.moderation import ModerationAction
 from domain.models import RAGResponse, RetrievedChunk
@@ -5,8 +8,8 @@ from ports.llm import LLMClient
 from services.moderation_service import ModerationService
 from services.retriever import Retriever
 
-_SYSTEM_PROMPT = (
-    "Eres un asistente de soporte para una empresa de HR SaaS. "
+DEFAULT_SYSTEM_PROMPT = (
+    "Eres un asistente de soporte para una empresa SaaS. "
     "Respondés preguntas de empleados basándote exclusivamente en la "
     "documentación interna provista como contexto. Reglas:\n"
     "1. Si la respuesta está en el contexto, respondé con detalle citando la fuente.\n"
@@ -14,12 +17,41 @@ _SYSTEM_PROMPT = (
     "3. No inventes datos que no estén en el contexto."
 )
 
+_USER_TEMPLATE = (
+    "## Pregunta\n{question}\n\n"
+    "## Contexto recuperado\n{context}\n\n"
+    "## Instrucciones\n"
+    "Respondé solo con la información del contexto. "
+    "Citá la fuente entre paréntesis al final de cada afirmación clave."
+)
+
 
 class RAGPipeline:
-    def __init__(self, retriever: Retriever, llm: LLMClient, moderation: ModerationService) -> None:
+    """Retrieval-augmented generation for one knowledge domain.
+
+    `system_prompt` is parameterized (not hardcoded) so the same class backs
+    every specialized agent (HR/Tech/Finance) with only the prompt, data and
+    vector collection changing between them — see src/agents/*.
+
+    The generation step is a real LCEL chain (ChatPromptTemplate | chat_model
+    | StrOutputParser), not a hand-built message list — this is the
+    LangChain "chain" component the assignment asks for, and it's what
+    Langfuse's callback handler traces as a single generation span.
+    """
+
+    def __init__(
+        self,
+        retriever: Retriever,
+        llm: LLMClient,
+        moderation: ModerationService,
+        system_prompt: str = DEFAULT_SYSTEM_PROMPT,
+    ) -> None:
         self._retriever = retriever
-        self._llm = llm
         self._moderation = moderation
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", system_prompt), ("user", _USER_TEMPLATE)]
+        )
+        self._chain = prompt | llm.model | StrOutputParser()
 
     def ask(self, question: str) -> RAGResponse:
         risks, action, reason = self._moderation.check(question)
@@ -28,29 +60,15 @@ class RAGPipeline:
             raise ContentBlockedError(reason)
 
         retrieved = self._retriever.retrieve(question)
-        messages = self._build_messages(question, retrieved)
-        answer = self._llm.chat(messages)
+        answer = self._chain.invoke({
+            "question": question,
+            "context": self._format_context(retrieved),
+        })
         return RAGResponse(
             user_question=question,
             system_answer=answer,
             chunks_related=retrieved,
         )
-
-    def _build_messages(self, question: str, retrieved: list[RetrievedChunk]) -> list[dict]:
-        context = self._format_context(retrieved)
-        return [
-            {"role": "system", "content": _SYSTEM_PROMPT},
-            {
-                "role": "user",
-                "content": (
-                    f"## Pregunta\n{question}\n\n"
-                    f"## Contexto recuperado\n{context}\n\n"
-                    "## Instrucciones\n"
-                    "Respondé solo con la información del contexto. "
-                    "Citá la fuente entre paréntesis al final de cada afirmación clave."
-                ),
-            },
-        ]
 
     @staticmethod
     def _format_context(retrieved: list[RetrievedChunk]) -> str:

@@ -3,3 +3,7 @@
 __pycache__/
 *.pyc
 .venv/
+logs/
+.chroma/
+.chroma_*/
+.faiss/

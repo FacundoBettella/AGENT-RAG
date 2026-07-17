@@ -1,71 +1,64 @@
 from pathlib import Path
 
-import chromadb
-from chromadb.config import Settings
+from langchain_chroma import Chroma
+from langchain_core.documents import Document
 
 from domain.models import Chunk, RetrievedChunk
 from ports.embedder import Embedder
 
 
 class ChromaStore:
+    """VectorStore Protocol implementation backed by langchain_chroma.Chroma
+    (ChromaDB's HNSW index under the hood).
+
+    Converts between our own Chunk/RetrievedChunk domain objects and
+    LangChain's Document at this boundary, so the rest of the app (Indexer,
+    Retriever, RAGPipeline) never has to import a LangChain type directly —
+    LangChain is an implementation detail of this adapter, not a leak into
+    the domain/services layers.
+    """
+
     def __init__(
         self,
         embedder: Embedder,
         collection_name: str = "faq",
         persist_directory: str = ".chroma",
     ) -> None:
-        self._embedder = embedder
-        path = Path(persist_directory)
-        path.mkdir(parents=True, exist_ok=True)
-        self._client = chromadb.PersistentClient(
-            path=str(path),
-            settings=Settings(anonymized_telemetry=False),
-        )
-        self._collection = self._client.get_or_create_collection(
-            name=collection_name,
-            metadata={"hnsw:space": "cosine"},
+        Path(persist_directory).mkdir(parents=True, exist_ok=True)
+        self._store = Chroma(
+            collection_name=collection_name,
+            embedding_function=embedder,
+            persist_directory=persist_directory,
+            # explicit cosine space so similarity_search_with_relevance_scores
+            # has a defined score function (defaults to L2 otherwise).
+            collection_metadata={"hnsw:space": "cosine"},
         )
 
     def add(self, chunks: list[Chunk]) -> None:
         if not chunks:
             return
-        texts = [c.content for c in chunks]
-        embeddings = self._embedder.embed(texts)
-        self._collection.add(
-            ids=[c.id for c in chunks],
-            documents=texts,
-            embeddings=embeddings,
-            metadatas=[
-                {"document_id": c.document_id, "chunk_index": c.chunk_index, **c.metadata}
-                for c in chunks
-            ],
-        )
+        documents = [
+            Document(
+                page_content=c.content,
+                metadata={"document_id": c.document_id, "chunk_index": c.chunk_index, **c.metadata},
+            )
+            for c in chunks
+        ]
+        self._store.add_documents(documents, ids=[c.id for c in chunks])
 
     def query(self, text: str, top_k: int = 3) -> list[RetrievedChunk]:
-        embedding = self._embedder.embed([text])[0]
-        result = self._collection.query(
-            query_embeddings=[embedding],
-            n_results=top_k,
-            include=["documents", "metadatas", "distances"],
-        )
-        documents = (result.get("documents") or [[]])[0]
-        metadatas = (result.get("metadatas") or [[]])[0]
-        distances = (result.get("distances") or [[]])[0]
-        ids = (result.get("ids") or [[]])[0]
-
+        results = self._store.similarity_search_with_relevance_scores(text, k=top_k)
         retrieved = []
-        for doc, meta, dist, cid in zip(documents, metadatas, distances, ids):
-            meta = dict(meta or {})
+        for doc, score in results:
+            meta = dict(doc.metadata or {})
             chunk = Chunk(
-                id=str(cid),
-                content=str(doc),
-                document_id=str(meta.pop("document_id", cid)),
+                content=doc.page_content,
+                document_id=str(meta.pop("document_id", "")),
                 chunk_index=int(meta.pop("chunk_index", 0)),
                 metadata=meta,
             )
-            similarity = 1 - float(dist)
-            retrieved.append(RetrievedChunk(chunk=chunk, similarity=similarity))
+            retrieved.append(RetrievedChunk(chunk=chunk, similarity=float(score)))
         return retrieved
 
     def count(self) -> int:
-        return self._collection.count()
+        return self._store._collection.count()

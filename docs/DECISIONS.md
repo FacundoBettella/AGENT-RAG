@@ -82,3 +82,88 @@ el resultado final es un sistema end-to-end coherente: API HTTP real,
 protegida por moderación, sirviendo al sistema multi-agente completo.
 
 ---
+
+## ADR-004: LangChain 1.x — LCEL en vez de chains clásicas o `create_agent`
+
+**Contexto:** Al instalar dependencias, `langchain` resolvió a la versión
+**1.3**, no a la serie 0.3.x que es la más común en tutoriales y en el
+conocimiento previo del asistente. Al inspeccionar el paquete instalado
+(en vez de asumir por memoria) se confirmó que LangChain 1.0 reestructuró
+la librería:
+
+- El paquete `langchain` de primer nivel ahora expone principalmente
+  `langchain.agents.create_agent` — un constructor de agentes autónomos
+  (el LLM decide qué tool usar en un loop).
+- Las chains clásicas (`RetrievalQA`, `create_retrieval_chain`, etc.) se
+  movieron a un paquete separado, `langchain-classic`, mantenido por
+  compatibilidad.
+- Las primitivas LCEL (`Runnable`, `ChatPromptTemplate`, `StrOutputParser`,
+  el operador `|` para componer) siguen viviendo en `langchain-core` y no
+  cambiaron — son la base estable de todo lo demás.
+
+**Decisión:** El core RAG (`services/pipeline.py`) se implementó con **LCEL
+puro**: `ChatPromptTemplate | chat_model | StrOutputParser()`. El
+orquestador (ADR pendiente, fase de routing) también se construirá con LCEL
+explícito (clasificar → `RunnableBranch`/`RunnableLambda` según intención),
+no con `create_agent`.
+
+**Alternativas consideradas:**
+- *`langchain-classic` (`create_retrieval_chain` + `RetrievalQA`)*: es la
+  API "clásica" que más aparece en documentación y cursos. Se descartó
+  porque es explícitamente la ruta de compatibilidad hacia atrás en 1.x, no
+  la recomendada para código nuevo, y agrega una dependencia extra sin
+  ganar nada que LCEL no dé ya de forma más simple y explícita.
+- *`langchain.agents.create_agent` (agente autónomo con tools)*: cada
+  agente de dominio se expondría como una `tool`, y el orquestador sería un
+  único agente que decide con tool-calling a cuál delegar. Es el patrón
+  "más nuevo" y más autónomo, pero la consigna de M3 describe
+  explícitamente "clasifique la intención... enrutamiento condicional" —
+  es decir, un paso de clasificación explícito seguido de un branch
+  determinístico, no una decisión libre del LLM vía tool-calling. LCEL con
+  branching explícito matchea esa descripción de forma más directa, es más
+  fácil de trazar en Langfuse (cada paso es un span nombrado, no una
+  decisión opaca dentro del loop del agente), y es más fácil de testear
+  (test_queries.json puede verificar el paso de clasificación de forma
+  aislada).
+
+**Consecuencias:** el proyecto no usa la primitiva "más nueva y destacada"
+de LangChain 1.x (`create_agent`), lo cual vale la pena aclarar en el README
+como decisión consciente, no como desconocimiento de la API. Si en el futuro
+se quisiera un orquestador más autónomo (que además decida *combinar*
+información de varios dominios en una sola respuesta), `create_agent` con
+los 3 RAG agents como tools sería el camino natural de evolución.
+
+---
+
+## ADR-005: ChromaDB como vector store primario (FAISS queda como adapter alternativo sin migrar)
+
+**Contexto:** El sistema necesita 3 colecciones de vectores independientes
+(HR/Tech/Finance). `ports/vector_store.py` ya definía un Protocol
+(`add`/`query`/`count`) con dos adapters intercambiables desde M2:
+`ChromaStore` y `FAISSStore`.
+
+**Decisión:** `ChromaStore` se reescribió para envolver
+`langchain_chroma.Chroma` (ver ADR-002) y es el vector store usado por los
+3 agentes, cada uno con su propio `collection_name` dentro de un mismo
+`persist_directory` — ChromaDB soporta múltiples colecciones nombradas en
+un solo cliente persistente, que es exactamente lo que hace falta acá.
+`FAISSStore` (FAISS + `IndexHNSWFlat` explícito, documentado en el README
+de M2) **no se migró a LangChain** y queda tal cual estaba: una
+implementación alternativa del mismo port, no usada por el flujo
+multi-agente de M3.
+
+**Alternativas consideradas:**
+- *Migrar también FAISS a `langchain_community.vectorstores.FAISS`*: dado
+  que FAISS no tiene concepto nativo de colecciones, cada dominio
+  necesitaría su propio índice `.faiss` serializado por separado
+  (`save_local`/`load_local`), sin ninguna ventaja sobre Chroma para este
+  caso de uso. Se descartó por ser trabajo extra sin beneficio: el punto de
+  tener ports/adapters (ADR-002) es poder no tocar el adapter que no se usa.
+
+**Consecuencias:** el repo mantiene la comparación educativa Chroma vs
+FAISS documentada en el README de M2 (HNSW, IVF, PQ, Flat), pero hay que
+aclarar en el README de M3 que solo el path de Chroma está integrado con
+LangChain y activo en el sistema multi-agente; FAISS queda como referencia
+de la arquitectura swappable, no como opción funcional del flujo actual.
+
+---
