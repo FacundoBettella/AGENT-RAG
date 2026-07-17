@@ -5,3 +5,14 @@ numpy>=1.24.0
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
 python-dotenv>=1.0.0
+
+# --- M3: multi-agent orchestration (LangChain) + observability (Langfuse) ---
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langchain-chroma>=0.1.4
+langchain-community>=0.3.0
+langfuse>=2.53.0
+tiktoken>=0.7.0
+jupyter>=1.0.0
+ipykernel>=6.29.0
