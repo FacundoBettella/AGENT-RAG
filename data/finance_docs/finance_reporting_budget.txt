@@ -1,0 +1,52 @@
+REPORTING FINANCIERO Y CIERRE CONTABLE — FINANZAS
+HR SaaS Company | Documentación Interna v1.2
+========================================
+
+
+SECCIÓN 1: CIERRE CONTABLE Y CALENDARIO FINANCIERO
+========================================================
+
+¿Cuándo se realiza el cierre contable mensual?
+El cierre contable se realiza entre el día 1 y el día 5 hábil de cada mes, correspondiente al mes anterior. Durante ese período, el sistema de expensas y las solicitudes de compra pueden tener demoras adicionales en la aprobación debido a la carga de trabajo del equipo contable.
+
+¿Qué reportes financieros recibe cada área mensualmente?
+Cada responsable de área recibe automáticamente un reporte mensual de ejecución presupuestaria (gastado vs. presupuestado) el día 10 hábil del mes siguiente, junto con el detalle de las principales variaciones respecto del mes anterior.
+
+¿Cómo se calcula el cierre de fin de año fiscal?
+El año fiscal de la empresa coincide con el año calendario (enero a diciembre). El cierre anual incluye auditoría externa entre enero y marzo del año siguiente, y los estados contables auditados se presentan al directorio en la reunión de abril.
+
+
+SECCIÓN 2: CENTROS DE COSTO Y CLASIFICACIÓN CONTABLE
+============================================================
+
+¿Qué es un centro de costo y cómo lo identifico?
+Cada área y equipo tiene asignado un código de centro de costo (por ejemplo, ENG-001 para Ingeniería Backend) que debe usarse al cargar cualquier gasto o solicitud de compra. El listado completo de códigos está disponible en el portal de Finanzas, sección "Centros de Costo".
+
+¿Qué hago si no sé qué centro de costo usar para un gasto compartido entre áreas?
+Para gastos compartidos entre dos o más áreas (por ejemplo, un evento conjunto de Marketing y Ventas), contactar a Finanzas para definir la proporción de distribución del gasto entre los centros de costo correspondientes antes de cargarlo.
+
+
+SECCIÓN 3: SOLICITUDES DE INFORMACIÓN FINANCIERA
+=======================================================
+
+¿Puedo solicitar reportes financieros personalizados para mi equipo?
+Sí, los responsables de área pueden solicitar reportes ad-hoc al equipo de FP&A (Financial Planning & Analysis) a través del portal de Finanzas, categoría "Solicitud de Reporte". El tiempo de entrega estándar es de 5 días hábiles para reportes simples y hasta 10 días para análisis más complejos.
+
+¿Dónde consulto los indicadores financieros generales de la empresa?
+Los indicadores generales (revenue, burn rate, runway) se comparten en la reunión mensual "All Hands" y quedan documentados en el espacio de Confluence "Finanzas — Reportes Ejecutivos", accesible según el nivel de confidencialidad definido para cada rol.
+
+¿Qué información financiera es confidencial y no debe compartirse?
+Los datos de revenue por cliente, márgenes específicos por producto y proyecciones financieras no publicadas son estrictamente confidenciales y solo accesibles para roles de liderazgo y el equipo de Finanzas. Compartir esta información fuera de la empresa constituye una violación grave del código de conducta.
+
+
+SECCIÓN 4: MONEDA EXTRANJERA Y OPERACIONES INTERNACIONALES
+==================================================================
+
+¿Cómo se manejan los pagos a proveedores en el exterior?
+Los pagos internacionales se procesan a través de la plataforma de pagos globales de la empresa (Wise Business), que ofrece mejores tipos de cambio que la transferencia bancaria tradicional. El plazo de acreditación es de 2 a 4 días hábiles según el país de destino.
+
+¿Qué tipo de cambio se usa para reportes en múltiples monedas?
+Para consolidar reportes financieros con operaciones en distintas monedas, se utiliza el tipo de cambio promedio mensual del Banco Central para gastos operativos, y el tipo de cambio de cierre de mes para el balance patrimonial.
+
+¿Cómo afecta la inflación a los presupuestos aprobados?
+Los presupuestos anuales incluyen una previsión de ajuste por inflación revisada trimestralmente por el comité de Finanzas. Si la inflación real supera la proyección en más de 5 puntos porcentuales en un trimestre, las áreas pueden solicitar una revisión extraordinaria de su presupuesto.

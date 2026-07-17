@@ -1,0 +1,61 @@
+HERRAMIENTAS DE SOFTWARE Y MESA DE AYUDA — IT SUPPORT
+HR SaaS Company | Documentación Interna v1.4
+========================================
+
+
+SECCIÓN 1: HERRAMIENTAS APROBADAS
+====================================
+
+¿Cuáles son las herramientas de comunicación oficiales?
+Slack es la herramienta oficial de mensajería interna, y Google Workspace (Gmail, Calendar, Drive, Meet) es la suite oficial de correo y documentos. El uso de mensajería personal (WhatsApp, Telegram) para comunicación de trabajo está desaconsejado salvo excepciones operativas puntuales acordadas con el responsable de área.
+
+¿Qué herramienta se usa para gestión de proyectos?
+El equipo de Ingeniería y Producto utiliza Jira para gestión de tickets y Confluence para documentación técnica. Otras áreas (Marketing, Éxito del Cliente) utilizan Asana. La elección de herramienta por área fue definida por IT junto con cada Director para evitar duplicación de licencias.
+
+¿Qué herramientas de diseño están disponibles?
+Figma es la herramienta oficial de diseño de producto, con licencias asignadas al equipo de Producto y Diseño. Otros equipos pueden solicitar acceso de solo lectura ("viewer") sin costo adicional a través del portal de software interno.
+
+¿Cómo solicito acceso a una herramienta que ya usa mi equipo?
+Si la herramienta ya está aprobada y en uso por tu área, solicitá el acceso directamente a tu responsable, quien lo asigna desde la consola de administración correspondiente o a través de un ticket simplificado categoría "Acceso — Herramienta Existente" con aprobación automática.
+
+
+SECCIÓN 2: MESA DE AYUDA Y TICKETS
+======================================
+
+¿Cómo abro un ticket de soporte de IT?
+Ingresá a helpdesk.company.com, elegí la categoría correspondiente (Hardware, Software, Acceso, Conectividad, Seguridad) y describí el problema con el mayor detalle posible, incluyendo capturas de pantalla si aplica. Recibirás un número de ticket y actualizaciones por correo y Slack.
+
+¿Cuáles son los tiempos de respuesta (SLA) de IT?
+Los tickets urgentes (bloqueo total de trabajo) se atienden dentro de las 2 horas hábiles. Los tickets de prioridad media (funcionalidad parcial afectada) se atienden dentro de las 24 horas hábiles. Los tickets de baja prioridad (solicitudes, mejoras) se atienden dentro de los 5 días hábiles.
+
+¿Hay soporte de IT fuera del horario laboral?
+Sí, para incidentes críticos que afecten la operación de producción o la seguridad de la empresa, existe una guardia de IT 24/7 accesible por el canal #it-emergencias en Slack o la línea telefónica de emergencias. Para consultas no urgentes fuera de horario, se recomienda abrir un ticket normal que será atendido al siguiente día hábil.
+
+¿Cómo escalo un ticket que no fue resuelto a tiempo?
+Si un ticket supera el SLA correspondiente, podés escalarlo respondiendo directamente en el ticket con la mención "@escalamiento" o contactando al Team Lead de IT Support. Los escalamientos se priorizan automáticamente en el sistema.
+
+
+SECCIÓN 3: PROBLEMAS TÉCNICOS COMUNES
+========================================
+
+¿Qué hago si mi laptop está muy lenta?
+Reiniciá el equipo y verificá que no haya actualizaciones de sistema operativo pendientes desde hace más de una semana. Si el problema persiste, abrí un ticket categoría "Hardware — Rendimiento" adjuntando una captura del uso de CPU y memoria (Monitor de Actividad en Mac, Administrador de Tareas en Windows).
+
+¿Qué hago si no puedo unirme a una videollamada en Google Meet?
+Verificá permisos de cámara y micrófono en la configuración del navegador o de la app de escritorio. Si el problema persiste en múltiples reuniones, puede ser un problema de ancho de banda; probá desactivar la cámara y usar solo audio, o reportá con categoría "Software — Videoconferencia".
+
+¿Qué hago si un archivo de Google Drive no sincroniza?
+Cerrá sesión y volvé a iniciar sesión en la app de Google Drive de escritorio. Verificá también el espacio disponible en tu disco local. Si el archivo pertenece a una carpeta compartida y no tenés permisos de edición, contactá al dueño de la carpeta antes de abrir un ticket.
+
+¿Qué hago si recibo un error al acceder a una herramienta con SSO?
+Verificá primero que tu cuenta esté activa en Okta (ícono verde en el dashboard). Si el error persiste, puede deberse a que la herramienta no tiene la integración SSO correctamente configurada para tu rol; reportalo con categoría "Acceso — SSO" indicando el nombre exacto de la herramienta.
+
+
+SECCIÓN 4: ONBOARDING TÉCNICO Y CAPACITACIÓN
+================================================
+
+¿Qué capacitación técnica recibo al ingresar?
+Durante la primera semana, IT dicta una sesión de "IT 101" cubriendo el uso de VPN, 2FA, gestor de contraseñas, políticas de seguridad y herramientas oficiales. La sesión queda grabada y disponible en Confluence para consulta posterior.
+
+¿Dónde encuentro documentación técnica de las herramientas internas?
+Toda la documentación de IT (guías de instalación, políticas de seguridad, FAQs) está centralizada en el espacio "IT Support" de Confluence, accesible para todos los empleados con su cuenta de SSO.

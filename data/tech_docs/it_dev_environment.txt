@@ -1,0 +1,55 @@
+ENTORNOS DE DESARROLLO Y ACCESOS TÉCNICOS — IT SUPPORT
+HR SaaS Company | Documentación Interna v1.4
+========================================
+
+
+SECCIÓN 1: ACCESO A REPOSITORIOS Y CI/CD
+============================================
+
+¿Cómo solicito acceso a un repositorio de código?
+El acceso a repositorios se solicita a través del portal de IT indicando el repositorio y el rol requerido (lectura, escritura, administrador). Para repositorios de equipos de Ingeniería, el Tech Lead del equipo debe aprobar la solicitud antes de que IT otorgue el acceso en GitHub.
+
+¿Qué hago si mi pipeline de CI/CD falla por un problema de permisos?
+Verificá primero si el token o la credencial de servicio asociada al pipeline expiró; las credenciales de CI/CD rotan automáticamente cada 90 días por política de seguridad. Si el problema persiste, abrí un ticket categoría "DevOps — CI/CD" adjuntando el log de error del pipeline.
+
+¿Cómo solicito acceso a un ambiente de staging o producción?
+El acceso a producción es restringido y requiere aprobación del Tech Lead y de Seguridad, además de tener 2FA y VPN configurados. El acceso a staging tiene un proceso simplificado, aprobado únicamente por el Tech Lead del equipo, y se otorga dentro de las 24 horas hábiles.
+
+¿Qué política existe para las claves de API y secretos?
+Todas las claves de API y secretos deben almacenarse en el gestor de secretos corporativo (Vault), nunca en el código fuente ni en archivos de configuración versionados. El escaneo automático de repositorios detecta secretos expuestos y bloquea el merge del pull request hasta que se resuelva.
+
+
+SECCIÓN 2: ENTORNOS LOCALES DE DESARROLLO
+================================================
+
+¿Qué requisitos de hardware necesito para desarrollo local?
+Los roles de Ingeniería reciben laptops con al menos 32GB de RAM y procesador de alto rendimiento, adecuados para correr entornos de contenedores (Docker) y bases de datos locales. Si tu carga de trabajo requiere más recursos, podés solicitar una evaluación de hardware a IT.
+
+¿Cómo configuro mi entorno de desarrollo al ingresar?
+Cada equipo de Ingeniería mantiene una guía de "Getting Started" en Confluence con los pasos específicos (clonar repositorios, instalar dependencias, variables de entorno). IT provee acceso a Docker Desktop y a las licencias de IDE necesarias (JetBrains, VS Code Enterprise) desde el primer día.
+
+¿Qué hago si tengo conflictos de versiones de lenguajes o dependencias?
+Se recomienda usar los gestores de versiones estándar del equipo (nvm, pyenv, asdf) documentados en la guía de cada repositorio. Para problemas persistentes de entorno, el canal de Slack #dev-environment-help tiene soporte de pares además del ticket formal a IT.
+
+
+SECCIÓN 3: HERRAMIENTAS DE MONITOREO Y OBSERVABILIDAD
+============================================================
+
+¿Cómo accedo a los dashboards de monitoreo de producción?
+El acceso a Grafana y Datadog se solicita junto con el acceso a producción, ya que estas herramientas muestran métricas y logs de sistemas en vivo. El acceso de solo lectura a dashboards no sensibles puede otorgarse a cualquier empleado de Ingeniería sin aprobación adicional.
+
+¿Qué hago si recibo una alerta de monitoreo fuera de horario?
+Las alertas de severidad crítica activan automáticamente la guardia de turno (on-call) definida en PagerDuty. Si no sos parte de la guardia pero recibís una alerta por error, reportalo al canal #on-call-eng para corregir la configuración de enrutamiento de alertas.
+
+¿Cómo se gestiona el acceso a logs con datos de clientes?
+El acceso a logs que contengan datos personales de clientes requiere aprobación adicional de Seguridad y se audita mensualmente. Los logs se anonimizan automáticamente después de 90 días salvo que exista una investigación activa que requiera su conservación.
+
+
+SECCIÓN 4: LICENCIAS Y HERRAMIENTAS DE INGENIERÍA
+========================================================
+
+¿Qué IDEs y herramientas de desarrollo están licenciadas por la empresa?
+La empresa provee licencias de JetBrains (IntelliJ, PyCharm, WebStorm), GitHub Copilot y Postman Team para todo el equipo de Ingeniería. Las licencias se activan automáticamente al vincular tu cuenta corporativa desde el portal de software interno.
+
+¿Puedo usar herramientas de IA generativa para escribir código?
+Sí, GitHub Copilot está aprobado y disponible para todo el equipo de Ingeniería. El uso de otras herramientas de IA generativa externas para código de la empresa debe consultarse previamente con Seguridad, ya que algunas herramientas entrenan modelos con el código ingresado, lo cual viola la política de confidencialidad.

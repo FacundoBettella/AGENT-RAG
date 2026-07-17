@@ -1,0 +1,61 @@
+ACCESOS Y SEGURIDAD INFORMÁTICA — IT SUPPORT
+HR SaaS Company | Documentación Interna v1.4
+========================================
+
+
+SECCIÓN 1: CONTRASEÑAS Y AUTENTICACIÓN
+==========================================
+
+¿Cuál es la política de contraseñas de la empresa?
+Las contraseñas deben tener un mínimo de 12 caracteres, combinando mayúsculas, minúsculas, números y símbolos. Se renuevan cada 90 días para sistemas críticos (VPN, base de datos de producción) y no pueden repetirse respecto de las últimas 5 contraseñas utilizadas. El gestor de contraseñas corporativo (1Password) es obligatorio para todos los empleados.
+
+¿Cómo reseteo mi contraseña si la olvidé?
+Podés resetear tu contraseña desde el portal de autoservicio (sso.company.com/reset) usando tu segundo factor de autenticación. Si no tenés acceso al segundo factor, contactá a IT mediante ticket categoría "Acceso — Urgente" con verificación de identidad por videollamada.
+
+¿Qué es el doble factor de autenticación (2FA/MFA) y es obligatorio?
+Sí, es obligatorio para todas las cuentas corporativas (correo, VPN, herramientas de producción). Se configura con la app Google Authenticator o Duo Mobile durante el onboarding. Sin 2FA activo, el acceso a sistemas críticos queda bloqueado automáticamente a partir del séptimo día de ingreso.
+
+¿Qué es el Single Sign-On (SSO) de la empresa?
+El SSO permite acceder a la mayoría de las herramientas internas (Slack, Google Workspace, Jira, herramientas de RRHH) con una sola cuenta corporativa. Se gestiona a través de Okta. Cualquier herramienta nueva que se contrate para un equipo debe integrarse a Okta antes de habilitarse para más de 5 usuarios.
+
+
+SECCIÓN 2: VPN Y ACCESO REMOTO
+==================================
+
+¿Cómo me conecto a la VPN corporativa?
+La VPN se instala desde el portal de software interno (software.company.com) y se configura automáticamente con tus credenciales corporativas y 2FA. Es obligatoria para acceder a bases de datos internas, repositorios de código privados y sistemas de administración, incluso trabajando desde la oficina.
+
+¿Qué hago si la VPN no conecta?
+Verificá primero que tu 2FA esté sincronizado (hora del dispositivo correcta) y que tengas la última versión del cliente VPN instalada. Si el problema persiste, abrí un ticket categoría "VPN — Conectividad" adjuntando el mensaje de error; el SLA de respuesta para este tipo de ticket es de 4 horas hábiles.
+
+¿Puedo trabajar sin VPN si tengo buena conexión a internet?
+No para sistemas que contienen datos sensibles o de producción. El acceso sin VPN a esos sistemas está bloqueado a nivel de firewall independientemente de la calidad de la conexión, como medida de seguridad perimetral.
+
+
+SECCIÓN 3: INSTALACIÓN DE SOFTWARE Y PERMISOS
+==================================================
+
+¿Puedo instalar cualquier software en mi laptop de trabajo?
+No. Las laptops corporativas tienen permisos de administrador restringidos. El software debe solicitarse a través del portal de software interno, que incluye un catálogo de herramientas pre-aprobadas de instalación inmediata. Software fuera del catálogo requiere aprobación de IT y del responsable del área, evaluando riesgos de seguridad y licenciamiento.
+
+¿Cómo solicito una licencia de software (por ejemplo, Figma, JetBrains, etc.)?
+Las licencias se solicitan desde el portal de software interno indicando el motivo de negocio. Licencias de bajo costo (menos de $30 USD mensuales) se aprueban automáticamente; licencias de mayor costo requieren aprobación del responsable de área y, si superan $500 USD anuales, aprobación adicional de Finanzas.
+
+¿Qué pasa si necesito permisos de administrador temporales?
+Podés solicitar elevación temporal de permisos (24 a 72 horas) a través de ticket categoría "Acceso — Administrador Temporal", justificando la tarea específica. Todas las acciones realizadas con permisos elevados quedan registradas en el log de auditoría de seguridad.
+
+
+SECCIÓN 4: SEGURIDAD Y REPORTE DE INCIDENTES
+================================================
+
+¿Cómo reporto un correo de phishing sospechoso?
+Usá el botón "Reportar Phishing" integrado en el cliente de correo, o reenviá el mensaje a security@company.com sin hacer clic en enlaces ni descargar adjuntos. El equipo de seguridad analiza el reporte dentro de las 2 horas hábiles y notifica a todo el equipo si se detecta una campaña activa.
+
+¿Qué hago si sospecho que mi cuenta fue comprometida?
+Cambiá tu contraseña inmediatamente desde otro dispositivo y contactá al canal de emergencias de seguridad (#it-emergencias en Slack o la línea 24/7). El equipo de seguridad puede revocar sesiones activas y forzar el cierre de todos los dispositivos conectados de forma remota.
+
+¿Qué información debe estar cifrada en mi equipo?
+Todas las laptops corporativas tienen cifrado de disco completo habilitado por defecto (FileVault en Mac, BitLocker en Windows) desde la configuración inicial de IT. Está prohibido desactivar el cifrado bajo ninguna circunstancia; los intentos de desactivación generan una alerta automática al equipo de seguridad.
+
+¿Con qué frecuencia se hacen auditorías de seguridad?
+Se realizan auditorías internas trimestrales de accesos y permisos, y una auditoría externa de penetration testing anual. Los resultados relevantes para los empleados (por ejemplo, cambios obligatorios de política) se comunican por correo y en el canal #it-anuncios de Slack.

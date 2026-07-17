@@ -1,0 +1,55 @@
+GASTOS Y REEMBOLSOS — FINANZAS
+HR SaaS Company | Documentación Interna v1.2
+========================================
+
+
+SECCIÓN 1: RENDICIÓN DE GASTOS
+==================================
+
+¿Cómo rindo un gasto realizado con mi tarjeta corporativa?
+Todos los gastos con tarjeta corporativa deben cargarse en el sistema de expensas (expenses.company.com) dentro de los 10 días hábiles de realizados, adjuntando la factura o comprobante correspondiente. Gastos sin comprobante por más de $15.000 no serán reembolsados ni justificados contablemente.
+
+¿Qué categorías de gastos están permitidas?
+Las categorías aprobadas son: viáticos y comidas en viajes de trabajo, transporte (taxi, remis, combustible en viajes autorizados), alojamiento, materiales de oficina, capacitación y eventos de equipo. Gastos personales, multas de tránsito y bebidas alcohólicas fuera de eventos corporativos no son reembolsables.
+
+¿Cuánto tiempo tarda en procesarse un reembolso?
+Los reembolsos aprobados se acreditan junto con la liquidación de sueldo del mes en curso, siempre que se hayan cargado antes del día 20 de cada mes. Cargas posteriores al día 20 se procesan en la liquidación del mes siguiente.
+
+¿Qué pasa si mi gasto es rechazado?
+Si un gasto es rechazado, el sistema notifica el motivo (falta de comprobante, categoría no permitida, monto fuera de política). Podés apelar la decisión respondiendo directamente en el ticket de gasto con documentación adicional; el equipo de Finanzas revisa la apelación dentro de 5 días hábiles.
+
+
+SECCIÓN 2: TARJETA CORPORATIVA
+==================================
+
+¿Quiénes reciben tarjeta corporativa?
+Reciben tarjeta corporativa los roles con gastos recurrentes de representación, viajes frecuentes o compras de software para su equipo (Managers en adelante, y roles de Ventas o Éxito del Cliente con viajes a clientes). El resto de los empleados puede solicitar una tarjeta virtual de un solo uso para compras puntuales autorizadas.
+
+¿Cuál es el límite de la tarjeta corporativa?
+El límite mensual estándar es de $500.000, ajustable según el rol y el histórico de gastos del área. Aumentos de límite temporales (por ejemplo, para un viaje internacional) deben solicitarse con 10 días de anticipación al equipo de Finanzas.
+
+¿Qué hago si pierdo mi tarjeta corporativa o detecto un cargo no reconocido?
+Reportá de inmediato al equipo de Finanzas (finanzas@company.com) o llamá a la línea del banco emisor para bloquear la tarjeta. Finanzas gestiona la reposición dentro de 3 días hábiles y revisa el extracto para identificar cargos fraudulentos.
+
+
+SECCIÓN 3: VIAJES CORPORATIVOS
+==================================
+
+¿Cómo solicito un viaje de trabajo?
+Los viajes deben solicitarse con al menos 15 días de anticipación a través del portal de viajes corporativos, indicando motivo, destino y fechas. La aprobación requiere el visto bueno del responsable de área y, para viajes internacionales, aprobación adicional de Finanzas.
+
+¿Qué viáticos corresponden en un viaje nacional?
+El viático diario para viajes nacionales es de $25.000 para comidas y gastos menores, sin necesidad de comprobante hasta ese monto. El alojamiento y los pasajes se gestionan directamente a través de la agencia de viajes corporativa, sin desembolso personal del empleado.
+
+¿Qué pasa con los gastos en moneda extranjera?
+Los gastos en viajes internacionales se reembolsan al tipo de cambio oficial del día de la rendición, informado por el sistema de expensas. Se recomienda usar la tarjeta corporativa en el exterior para evitar adelantar fondos propios; en caso de usar tarjeta personal, el reembolso incluye el costo de conversión bancaria.
+
+
+SECCIÓN 4: PRESUPUESTO PERSONAL DE CAPACITACIÓN Y HERRAMIENTAS
+===================================================================
+
+¿Cómo uso mi presupuesto de capacitación desde el punto de vista financiero?
+El presupuesto anual de capacitación ($150.000, definido por RRHH) se rinde igual que cualquier otro gasto, categoría "Capacitación", con la factura a nombre de la empresa cuando sea posible. Compras superiores a $50.000 requieren la aprobación previa de RRHH antes de realizar el gasto, no después.
+
+¿Cómo se paga una suscripción de software que necesito para mi trabajo?
+Suscripciones de bajo costo pueden pagarse con tarjeta corporativa y rendirse en la categoría "Herramientas de Software". Suscripciones anuales de mayor costo deben tramitarse como una compra a través del proceso de procurement, no como un gasto individual, para asegurar la facturación correcta a nombre de la empresa.

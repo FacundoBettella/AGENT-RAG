@@ -1,0 +1,68 @@
+POLÍTICAS DE CONDUCTA Y CULTURA — RECURSOS HUMANOS
+HR SaaS Company | Documentación Interna v2.1
+========================================
+
+
+SECCIÓN 1: CÓDIGO DE CONDUCTA
+======================================
+
+¿Qué establece el código de conducta de la empresa?
+El código de conducta aplica a todos los empleados, contratistas y proveedores que interactúen con la empresa. Establece los principios de integridad, respeto, no discriminación y cumplimiento normativo que rigen la actividad diaria. Está disponible completo en el portal de RRHH, sección "Políticas", y debe ser aceptado digitalmente durante el onboarding.
+
+¿Qué se considera conflicto de interés?
+Se considera conflicto de interés cualquier situación en la que un empleado tenga un interés personal, financiero o familiar que pueda influir en sus decisiones laborales. Ejemplos incluyen: contratar proveedores relacionados con familiares directos sin declararlo, aceptar regalos de valor significativo de clientes o proveedores, o participar en negocios que compitan con la empresa. Todo conflicto de interés debe declararse mediante el formulario correspondiente en el portal de RRHH.
+
+¿Cuál es la política de regalos y hospitalidad?
+Los empleados pueden aceptar regalos de cortesía de hasta $20.000 de valor. Regalos de mayor valor deben declararse a RRHH y, en general, se rechazan o se donan a una organización benéfica. Está prohibido solicitar o aceptar regalos a cambio de decisiones comerciales o de contratación.
+
+¿Qué sucede en caso de incumplimiento del código de conducta?
+Las violaciones al código de conducta se evalúan según su gravedad y pueden derivar en apercibimiento escrito, suspensión o desvinculación con causa. El comité de ética revisa los casos reportados y garantiza el debido proceso, incluyendo la posibilidad de que el empleado presente su descargo antes de cualquier sanción.
+
+
+SECCIÓN 2: ACOSO Y DISCRIMINACIÓN
+====================================
+
+¿Cómo reporto una situación de acoso laboral?
+Cualquier situación de acoso, discriminación o maltrato puede reportarse de forma confidencial a través del canal de denuncias (denuncias@company.com) o directamente a RRHH. Las denuncias pueden hacerse de forma anónima. La empresa garantiza que no habrá represalias contra quien reporte de buena fe.
+
+¿Cómo se investigan las denuncias?
+Toda denuncia es investigada por un equipo independiente de RRHH y Legal dentro de los 10 días hábiles de recibida. Se garantiza confidencialidad a todas las partes involucradas. Al finalizar la investigación, se comunican las conclusiones y las medidas adoptadas a la persona denunciante.
+
+¿Qué política de diversidad e inclusión tiene la empresa?
+La empresa mantiene una política activa de diversidad e inclusión, con metas de representación de género en posiciones de liderazgo y programas de mentoría para grupos subrepresentados. Existen comités de diversidad (ERGs) abiertos a toda la organización que se reúnen mensualmente.
+
+
+SECCIÓN 3: CONFIDENCIALIDAD Y PROPIEDAD INTELECTUAL
+======================================================
+
+¿Qué información se considera confidencial?
+Se considera confidencial toda información no pública de la empresa, clientes o proveedores: código fuente, roadmaps de producto, datos financieros, información de clientes y estrategias comerciales. El acuerdo de confidencialidad (NDA) firmado en el ingreso permanece vigente durante 2 años después de finalizada la relación laboral.
+
+¿Puedo compartir información de la empresa en redes sociales?
+No se debe compartir información confidencial, capturas de pantalla de herramientas internas, ni detalles de clientes en redes sociales o públicamente. Las menciones sobre la empresa en redes personales deben aclarar que las opiniones son a título personal y no representan a la organización.
+
+¿A quién pertenece el código y los desarrollos que hago en mi trabajo?
+Todo desarrollo, código, diseño o propiedad intelectual creada durante la relación laboral y relacionada con las funciones del puesto pertenece a la empresa, según lo establecido en el contrato de trabajo. Esto aplica también a desarrollos realizados con herramientas o equipos de la empresa fuera del horario laboral si están relacionados con el negocio.
+
+
+SECCIÓN 4: GASTOS Y VIAJES CORPORATIVOS (RRHH)
+=================================================
+
+¿Qué gastos de representación cubre la empresa para eventos de RRHH?
+La empresa cubre gastos de eventos de team building, celebraciones de hitos de equipo y actividades de integración dentro del presupuesto asignado a cada área ($30.000 por persona por trimestre). Los gastos deben cargarse en el sistema de expensas dentro de los 15 días de realizado el evento.
+
+¿Cómo se gestionan los viajes por capacitación o eventos de RRHH?
+Los viajes vinculados a capacitaciones, conferencias o eventos de employer branding deben solicitarse con 20 días de anticipación a través del portal de RRHH. La empresa cubre pasajes, alojamiento y viáticos según la política general de viajes corporativos administrada por el área de Finanzas.
+
+
+SECCIÓN 5: BIENESTAR Y SALUD MENTAL
+======================================
+
+¿Qué programa de bienestar ofrece la empresa?
+La empresa ofrece un programa de bienestar que incluye acceso a una app de meditación y mindfulness, sesiones grupales de yoga semanales (presenciales y virtuales) y un fondo de $10.000 mensuales para actividades deportivas o gimnasio, reintegrable contra factura.
+
+¿Existe apoyo psicológico para los empleados?
+Sí. A través del programa de asistencia al empleado (EAP), cada colaborador y su grupo familiar directo tienen acceso a 6 sesiones anuales gratuitas con psicólogos externos a la empresa, con total confidencialidad. El acceso se solicita directamente con el proveedor del servicio, sin necesidad de informar a RRHH ni al responsable directo.
+
+¿Qué política de desconexión digital existe?
+Fuera del horario laboral acordado, los empleados no están obligados a responder mensajes ni correos de trabajo, salvo situaciones de emergencia operativa previamente definidas por el área. Los responsables de equipo deben respetar este derecho y evitar solicitar tareas fuera de horario de forma sistemática.

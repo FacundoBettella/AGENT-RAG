@@ -1,0 +1,62 @@
+BENEFICIOS EXTENDIDOS Y CICLO DE VIDA DEL EMPLEADO — RECURSOS HUMANOS
+HR SaaS Company | Documentación Interna v2.1
+========================================
+
+
+SECCIÓN 1: EQUITY Y COMPENSACIÓN VARIABLE
+============================================
+
+¿Qué empleados reciben stock options?
+Los empleados desde el nivel de Senior en adelante reciben un paquete de stock options (ISOs) como parte de su compensación total. El paquete se define en la oferta de ingreso y se otorga con un cliff de 1 año y vesting mensual durante 4 años. El área de Finanzas y RRHH comunican el detalle de vesting en cada aniversario.
+
+¿Qué es el bono anual y cómo se calcula?
+El bono anual discrecional se paga en marzo de cada año y depende de dos factores: el desempeño individual (evaluado en el ciclo de diciembre) y el cumplimiento de objetivos de la empresa. El monto de referencia es de hasta un 15% del salario anual para roles individuales y hasta 25% para roles de liderazgo.
+
+¿Existen bonos por objetivos específicos de área?
+Algunas áreas comerciales y de éxito del cliente tienen esquemas de comisiones o bonos por objetivos (OKRs) definidos trimestralmente. Estos esquemas se detallan en el anexo de compensación variable de cada rol y se liquidan junto con el sueldo del mes siguiente al cierre del trimestre.
+
+
+SECCIÓN 2: RELOCATION Y MOVILIDAD INTERNACIONAL
+===================================================
+
+¿La empresa ofrece asistencia de relocation?
+Sí, para posiciones que requieran mudanza a otra ciudad o país por necesidad del negocio. El paquete de relocation incluye pasajes, hasta 2 meses de alojamiento temporal, y asistencia con trámites migratorios a través de un proveedor externo. El paquete específico se acuerda caso por caso con RRHH antes de la aceptación de la oferta.
+
+¿Qué pasa con mi cobertura médica si me mudo temporalmente a otro país?
+Para asignaciones internacionales de más de 3 meses, RRHH gestiona una cobertura médica internacional adicional válida en el país de destino. Es responsabilidad del empleado notificar la fecha de viaje con al menos 30 días de anticipación para procesar la cobertura a tiempo.
+
+
+SECCIÓN 3: PROMOCIONES Y PLANES DE CARRERA
+==============================================
+
+¿Cómo funciona el proceso de promoción interna?
+Las promociones se evalúan en los ciclos de febrero y agosto, alineadas a las evaluaciones de desempeño. El responsable del área presenta el caso de promoción al comité de compensaciones, que evalúa impacto, antigüedad en el nivel actual y disponibilidad presupuestaria. La resolución se comunica dentro de los 30 días posteriores al comité.
+
+¿Qué es un Plan de Mejora de Desempeño (PIP)?
+Un PIP es un plan formal de 60 a 90 días para empleados cuyo desempeño no cumple las expectativas del rol. Incluye objetivos claros, seguimiento quincenal con el responsable y RRHH, y los recursos necesarios para revertir la situación. Al finalizar el plazo, se evalúa si el empleado continúa en su rol, es reasignado o se desvincula.
+
+¿Existen programas de mentoría interna?
+Sí, el programa de mentoría conecta a empleados con mentores de otras áreas o de mayor seniority durante 6 meses, con encuentros quincenales. La inscripción se abre dos veces al año a través del portal de RRHH y es completamente voluntaria tanto para mentores como para mentees.
+
+
+SECCIÓN 4: ESTRUCTURA ORGANIZACIONAL
+========================================
+
+¿Cómo está organizada la empresa?
+La empresa se organiza en las áreas de Producto, Ingeniería, Ventas, Éxito del Cliente, Marketing, Finanzas, Legal y RRHH, cada una liderada por un Director que reporta al CEO. El organigrama completo y actualizado está disponible en el portal de RRHH, sección "Nuestra Empresa".
+
+¿Qué niveles de seniority existen?
+La escala de seniority es: Junior, Semi-Senior, Senior, Staff y Principal para roles individuales, y Team Lead, Manager, Senior Manager, Director y VP para roles de gestión. Cada nivel tiene un rango salarial de referencia revisado anualmente por el comité de compensaciones.
+
+
+SECCIÓN 5: DESVINCULACIÓN Y ENTREVISTA DE SALIDA
+====================================================
+
+¿Es obligatoria la entrevista de salida?
+La entrevista de salida es altamente recomendada pero no obligatoria. Se realiza con un miembro de RRHH distinto del responsable directo del empleado, en un plazo de 5 días antes de la fecha de egreso. El objetivo es recoger feedback honesto sobre la experiencia del empleado en la empresa.
+
+¿Qué pasa con mis beneficios al desvincularme?
+La cobertura médica se mantiene activa hasta el último día del mes de egreso. Las stock options no vesteadas se pierden según el esquema de vesting; las vesteadas pueden ejercerse dentro de los 90 días posteriores al egreso. El acceso a sistemas internos se revoca el último día laboral.
+
+¿Puedo ser recontratado después de renunciar?
+Sí, siempre que la desvinculación anterior no haya sido con causa grave. Los ex empleados con buen desempeño y egreso en buenos términos ("boomerang employees") pueden aplicar a posiciones futuras y son evaluados con el mismo proceso que cualquier candidato externo, considerando también su historial previo en la empresa.

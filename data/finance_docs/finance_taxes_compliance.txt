@@ -1,0 +1,55 @@
+IMPUESTOS, FACTURACIÓN A CLIENTES Y COMPLIANCE — FINANZAS
+HR SaaS Company | Documentación Interna v1.2
+========================================
+
+
+SECCIÓN 1: FACTURACIÓN A CLIENTES
+=====================================
+
+¿Cómo se genera la factura para un cliente nuevo?
+La facturación a clientes se gestiona automáticamente desde el sistema de billing integrado con el CRM. El equipo de Ventas o Éxito del Cliente debe cargar los datos fiscales del cliente antes del primer cobro; Finanzas valida la información antes de habilitar la facturación recurrente.
+
+¿Qué hago si un cliente reporta un error en su factura?
+El equipo de Éxito del Cliente o Ventas debe derivar el reclamo a facturacion@company.com con el número de factura y el detalle del error. Finanzas emite una nota de crédito o una factura corregida dentro de las 48 horas hábiles según corresponda.
+
+¿Cómo se manejan los cobros recurrentes fallidos (dunning)?
+Cuando un cobro recurrente falla, el sistema reintenta automáticamente el cargo hasta 3 veces en un período de 7 días, notificando al cliente en cada intento. Si los 3 intentos fallan, la cuenta del cliente se marca como "en riesgo" y se notifica al equipo de Éxito del Cliente para gestión manual.
+
+¿Qué política de reembolsos existe para clientes?
+Los reembolsos a clientes se evalúan caso por caso según los términos del contrato comercial. Reembolsos menores a un mes de suscripción pueden aprobarse directamente por el equipo de Éxito del Cliente; reembolsos mayores requieren aprobación de Finanzas y del Director Comercial.
+
+
+SECCIÓN 2: RÉGIMEN IMPOSITIVO Y OBLIGACIONES FISCALES
+=============================================================
+
+¿Qué régimen impositivo aplica a la empresa?
+La empresa tributa como Responsable Inscripto ante IVA y Ganancias, con presentaciones mensuales de IVA y anticipos mensuales de Ganancias. El detalle completo de obligaciones fiscales está documentado en el espacio de Confluence "Finanzas — Compliance Fiscal", de acceso restringido al equipo de Finanzas y Legal.
+
+¿Cómo afectan las retenciones a los pagos que recibe la empresa de sus clientes?
+Algunos clientes, según su categoría fiscal, están obligados a retener impuestos (Ganancias, IIBB) al pagar las facturas de la empresa. Estas retenciones se registran contablemente como créditos fiscales y se descuentan de las obligaciones impositivas mensuales de la empresa.
+
+¿Qué controles de compliance fiscal existen para nuevos mercados?
+Antes de comenzar a facturar en un nuevo país, Finanzas y Legal realizan un análisis de compliance fiscal y regulatorio (impuestos locales, requisitos de facturación electrónica, retenciones aplicables). Este proceso puede tardar entre 4 y 8 semanas según la complejidad del mercado.
+
+
+SECCIÓN 3: AUDITORÍAS Y CONTROLES INTERNOS
+================================================
+
+¿Con qué frecuencia se realizan auditorías financieras?
+La empresa realiza una auditoría externa anual (obligatoria para reporting a inversores) y auditorías internas trimestrales de procesos clave: gastos, procurement y nómina. Los hallazgos relevantes se comunican a los Directores de área correspondientes con un plan de acción.
+
+¿Qué controles existen para prevenir fraude en gastos o pagos a proveedores?
+Todo pago a proveedores requiere doble aprobación (responsable de área y Finanzas) por encima de $300.000, segregación de funciones entre quien solicita y quien aprueba el pago, y conciliación bancaria diaria automatizada. Cualquier anomalía detectada se escala al comité de auditoría interna.
+
+¿Cómo reporto una sospecha de irregularidad financiera?
+Las sospechas de fraude, malversación o irregularidades contables pueden reportarse de forma confidencial al canal de denuncias (denuncias@company.com), el mismo utilizado para reportes de conducta, con investigación a cargo de un equipo conjunto de Finanzas, Legal y RRHH.
+
+
+SECCIÓN 4: INVERSIONES Y RELACIÓN CON INVERSORES
+========================================================
+
+¿Qué información financiera se comparte con los inversores?
+El equipo de Finanzas prepara un reporte mensual de métricas clave (MRR, churn, burn rate, runway) para el directorio y los inversores, siguiendo el formato estándar acordado en la última ronda de inversión. Esta información es estrictamente confidencial y no debe compartirse fuera de los canales autorizados.
+
+¿Cómo se gestionan los fondos levantados en una ronda de inversión?
+Los fondos se depositan en cuentas bancarias corporativas segregadas por moneda y se administran según el plan de uso de fondos presentado a los inversores. Finanzas reporta trimestralmente al directorio la ejecución real del plan de uso de fondos comparada con lo proyectado.

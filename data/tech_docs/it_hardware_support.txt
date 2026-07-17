@@ -1,0 +1,58 @@
+SOPORTE DE HARDWARE Y EQUIPAMIENTO — IT SUPPORT
+HR SaaS Company | Documentación Interna v1.4
+========================================
+
+
+SECCIÓN 1: EQUIPAMIENTO ESTÁNDAR
+====================================
+
+¿Qué equipamiento recibo al ingresar?
+Todo empleado recibe una laptop (MacBook Pro 14" o equivalente Windows según preferencia y rol), un mouse, auriculares con micrófono y un adaptador multipuerto. El equipo se entrega configurado con las cuentas corporativas activas antes del primer día, coordinado por IT junto con el proceso de onboarding de RRHH.
+
+¿Puedo elegir entre Mac y Windows?
+Sí, salvo excepciones por rol (por ejemplo, algunos equipos de infraestructura requieren Linux o Windows específicamente por compatibilidad de herramientas). La elección se define en el formulario de onboarding que IT recibe 15 días antes del ingreso.
+
+¿Qué hago si mi laptop falla o se rompe?
+Ante una falla de hardware, abrí un ticket en el sistema de soporte (helpdesk.company.com) categoría "Hardware — Urgente". IT provee un equipo de reemplazo dentro de las 24 horas hábiles mientras se repara o reemplaza el equipo original. Los datos se restauran automáticamente desde el último backup en la nube.
+
+¿Con qué frecuencia se renuevan los equipos?
+Las laptops se renuevan cada 3 años o antes si el rendimiento no es adecuado para las tareas del puesto, previa evaluación de IT. Los monitores, teclados y otros periféricos se renuevan por necesidad, sin un ciclo fijo.
+
+
+SECCIÓN 2: PERIFÉRICOS Y HOME OFFICE
+========================================
+
+¿Puedo solicitar un monitor adicional para mi casa?
+Sí. Los empleados pueden solicitar hasta un monitor externo, teclado y mouse ergonómico para su domicilio a través del portal de IT, sección "Solicitud de Equipamiento". La entrega se coordina con un proveedor de logística dentro de los 10 días hábiles de aprobada la solicitud.
+
+¿Qué pasa si necesito una silla ergonómica?
+La solicitud de silla ergonómica se gestiona conjuntamente entre IT y RRHH, disponible para empleados con más de 2 años de antigüedad o por recomendación médica con certificado. El catálogo de opciones está disponible en el portal de RRHH.
+
+¿Cómo devuelvo el equipamiento si dejo la empresa?
+Todo el equipamiento (laptop, monitor, periféricos) debe devolverse en la oficina más cercana o mediante retiro a domicilio coordinado por IT dentro de los 5 días posteriores a la fecha de egreso. El equipo se retorna en su embalaje original o en una caja provista por IT, con el cargador incluido.
+
+
+SECCIÓN 3: IMPRESORAS Y CONECTIVIDAD DE OFICINA
+====================================================
+
+¿Cómo configuro la impresora de la oficina?
+Las impresoras de oficina están disponibles en la red corporativa como "Print-HQ-Piso2" y "Print-HQ-Piso3". La configuración se realiza automáticamente al conectarte a la red WiFi corporativa "CompanyNet"; si no aparece, hay que instalar el driver desde el portal de software interno.
+
+¿Qué hago si no tengo señal WiFi en la oficina?
+Reportá el inconveniente al equipo de IT presencial (piso 2, mesa de ayuda) o abrí un ticket categoría "Conectividad — Oficina". Si el problema afecta a todo un piso, IT escala automáticamente al proveedor de infraestructura de red con SLA de 2 horas.
+
+¿Cómo accedo a salas de reunión con videollamada?
+Las salas de reunión equipadas con cámara y sistema de videoconferencia se reservan desde el calendario corporativo. Cada sala tiene una guía de uso pegada en la pared; ante fallas, reportar con categoría "AV — Sala de Reuniones" indicando el nombre de la sala.
+
+
+SECCIÓN 4: DISPOSITIVOS MÓVILES Y BYOD
+==========================================
+
+¿La empresa provee celular corporativo?
+Solo los roles que lo requieren por función (por ejemplo, guardia de infraestructura, ventas con viajes frecuentes) reciben celular corporativo. El resto de los empleados utiliza la política BYOD (Bring Your Own Device) para acceder a correo y Slack desde su celular personal.
+
+¿Qué requisitos de seguridad tiene usar mi celular personal para el trabajo (BYOD)?
+Para acceder a correo corporativo desde un dispositivo personal es obligatorio instalar la app de gestión de dispositivos móviles (MDM), configurar bloqueo por PIN o biometría, y aceptar la política de borrado remoto en caso de pérdida o robo del dispositivo. El proceso de alta se hace desde el portal de IT en menos de 10 minutos.
+
+¿Qué hago si pierdo mi celular o laptop con acceso corporativo?
+Reportar de inmediato a IT (canal de emergencias #it-emergencias en Slack o línea telefónica 24/7) para bloquear remotamente el dispositivo y revocar accesos. Es obligatorio reportar dentro de la primera hora de detectada la pérdida o robo, incluso fuera de horario laboral.

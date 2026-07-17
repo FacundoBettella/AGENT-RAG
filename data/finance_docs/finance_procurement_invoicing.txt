@@ -1,0 +1,58 @@
+PROCUREMENT Y FACTURACIÓN DE PROVEEDORES — FINANZAS
+HR SaaS Company | Documentación Interna v1.2
+========================================
+
+
+SECCIÓN 1: PROCESO DE COMPRAS (PROCUREMENT)
+================================================
+
+¿Cómo solicito la compra de una herramienta o servicio nuevo para mi equipo?
+Toda compra nueva (software, hardware en volumen, servicios de consultoría) debe iniciarse con una solicitud de compra en el portal de Finanzas, indicando proveedor, monto estimado y justificación de negocio. Compras menores a $200.000 requieren solo la aprobación del responsable de área; montos mayores requieren aprobación adicional del Director del área y, por encima de $1.000.000, del CFO.
+
+¿Cuánto tarda en aprobarse una solicitud de compra?
+Las solicitudes dentro del presupuesto ya aprobado del área se resuelven en 3 a 5 días hábiles. Solicitudes que impliquen una ampliación de presupuesto requieren revisión adicional del comité de presupuesto, que se reúne quincenalmente, por lo que el plazo puede extenderse a 15 días hábiles.
+
+¿Qué es un número de orden de compra (PO) y cuándo lo necesito?
+La orden de compra (Purchase Order) es el documento que autoriza formalmente a Finanzas a procesar el pago a un proveedor. Es obligatoria para cualquier compra superior a $300.000 antes de recibir el producto o servicio. El proveedor debe incluir el número de PO en su factura para que el pago se procese sin demoras.
+
+¿Puedo contratar directamente a un proveedor sin pasar por procurement?
+No para compras recurrentes o de monto significativo. Contrataciones directas sin proceso de procurement pueden generar demoras en el pago al proveedor y observaciones en la auditoría contable. Para compras puntuales de bajo monto (menores a $50.000), se puede usar la tarjeta corporativa sin necesidad de PO.
+
+
+SECCIÓN 2: ALTA Y PAGO DE PROVEEDORES
+===========================================
+
+¿Cómo se da de alta a un proveedor nuevo?
+El proveedor debe completar el formulario de alta en el portal de Finanzas, adjuntando constancia de CUIT, datos bancarios (CBU) y condición fiscal. El alta se procesa dentro de 5 días hábiles y es requisito indispensable antes de emitir cualquier orden de compra a ese proveedor.
+
+¿Cuáles son los plazos de pago a proveedores?
+El plazo estándar de pago es de 30 días desde la recepción de la factura conforme (sin observaciones). Proveedores estratégicos pueden tener condiciones especiales negociadas (15 o 45 días) definidas en el contrato marco correspondiente.
+
+¿Qué hago si un proveedor no recibió su pago a tiempo?
+El proveedor o el responsable interno que lo gestiona puede escribir a proveedores@company.com indicando el número de factura y PO asociado. Finanzas verifica el estado del pago y responde dentro de 48 horas hábiles con el detalle de la demora si la hubiera.
+
+¿Qué documentación necesita una factura para ser procesada?
+La factura debe incluir: razón social y CUIT del proveedor coincidente con el alta registrada, número de PO (si aplica), detalle de productos o servicios, y condición de IVA correcta según la categoría fiscal de la empresa. Facturas con datos incompletos son devueltas al proveedor con la observación específica.
+
+
+SECCIÓN 3: PRESUPUESTO Y APROBACIONES POR ÁREA
+====================================================
+
+¿Cómo consulto el presupuesto disponible de mi área?
+El presupuesto de cada área se consulta en tiempo real desde el dashboard de Finanzas (finance.company.com/budgets), visible para responsables de área y su equipo de liderazgo directo. Se actualiza semanalmente con los gastos y compromisos comprometidos (PO emitidas).
+
+¿Qué pasa si mi área se queda sin presupuesto antes de fin de año?
+El responsable de área debe presentar una solicitud de ampliación de presupuesto al comité correspondiente, justificando la necesidad y el impacto de no aprobarla. El comité de presupuesto evalúa la solicitud en su reunión quincenal considerando la disponibilidad general de la empresa.
+
+¿Cómo se define el presupuesto anual de cada área?
+El ciclo de planificación presupuestaria ocurre entre octubre y noviembre de cada año. Cada Director presenta su propuesta de presupuesto para el año siguiente, que es revisada y consolidada por Finanzas y aprobada finalmente por el CEO y el directorio en diciembre.
+
+
+SECCIÓN 4: CONTRATISTAS Y FREELANCERS
+===========================================
+
+¿Cómo se procesa el pago a un contratista o freelancer?
+Los contratistas se dan de alta como proveedores en el sistema de Finanzas y facturan mensualmente según lo acordado en su contrato de servicios. El pago sigue el mismo circuito que cualquier proveedor, con el plazo estándar de 30 días desde la factura conforme.
+
+¿Qué retenciones impositivas aplican a los pagos de contratistas?
+Según la categoría fiscal del contratista (monotributista, responsable inscripto) y el tipo de servicio, pueden aplicar retenciones de Ingresos Brutos o Ganancias conforme a la normativa vigente. Finanzas calcula automáticamente la retención correspondiente al procesar el pago y emite el certificado de retención mensualmente.
