@@ -103,7 +103,7 @@ class Orchestrator:
         return self._classifier.invoke({"question": question})
 
     def handle(self, question: str) -> OrchestratorResponse:
-        risks, action, reason = self._moderation.check(question)
+        _risks, action, reason = self._moderation.check(question)
         if action == ModerationAction.BLOCK:
             raise ContentBlockedError(reason)
 

@@ -7,6 +7,12 @@ router = APIRouter()
 
 @router.post("/query", response_model=QueryResponse)
 def post_query(body: QuestionRequest, request: Request) -> QueryResponse:
-    bundle = request.app.state.bundle
-    response = bundle.pipeline.ask(body.question)
-    return {"query_result": response.to_dict()}
+    orchestrator = request.app.state.orchestrator
+    result = orchestrator.handle(body.question)
+    return {
+        "query_result": {
+            **result.rag_response.to_dict(),
+            "intent": result.intent,
+            "reasoning": result.reasoning,
+        }
+    }

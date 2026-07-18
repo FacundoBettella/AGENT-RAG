@@ -7,8 +7,6 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse)
 def get_health(request: Request) -> HealthResponse:
-    bundle = request.app.state.bundle
-    return HealthResponse(
-        status="ok",
-        chunks_indexed=bundle.indexer._store.count(),
-    )
+    agents = request.app.state.agents
+    chunks_indexed = {name: agent.count() for name, agent in agents.items()}
+    return HealthResponse(status="ok", chunks_indexed=chunks_indexed)

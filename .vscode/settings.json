@@ -1,4 +1,8 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/src"
+    ],
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#3333ff",
         "activityBar.background": "#3333ff",

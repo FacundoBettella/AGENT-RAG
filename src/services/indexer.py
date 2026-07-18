@@ -24,3 +24,6 @@ class Indexer:
         chunks = self._chunker.split_many(documents)
         self._store.add(chunks)
         return len(chunks)
+
+    def count(self) -> int:
+        return self._store.count()

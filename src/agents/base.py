@@ -44,3 +44,9 @@ class DomainAgent:
 
     def ask(self, question: str) -> RAGResponse:
         return self._get_bundle().pipeline.ask(question)
+
+    def count(self) -> int:
+        return self._get_bundle().indexer.count()
+
+    def ingest_texts(self, texts: list[str]) -> int:
+        return self._get_bundle().indexer.index_texts(texts)

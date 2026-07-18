@@ -1,57 +1,30 @@
-import json
+import os
 
 from fastapi import APIRouter, Request
 
+from adapters.openai_llm import OpenAILLMClient
 from api.schemas import EvaluateResponse, QuestionRequest
-from domain.models import RAGResponse
+from services.evaluator import evaluate_response
 
 router = APIRouter()
 
-_EVALUATOR_PROMPT = """Eres un evaluador experto de sistemas RAG.
-Recibirás una pregunta, los fragmentos recuperados y la respuesta generada.
-Evaluá la calidad de la respuesta con un puntaje de 0 a 10 según estos criterios:
-
-- Relevancia (0-4): ¿los fragmentos recuperados son relevantes para la pregunta?
-- Precisión (0-3): ¿la respuesta se basa en los fragmentos sin inventar información?
-- Completitud (0-3): ¿la respuesta cubre todo lo que preguntaba el usuario?
-
-Respondé ÚNICAMENTE con este JSON:
-{
-  "score": <número del 0 al 10>,
-  "relevancia": <número del 0 al 4>,
-  "precision": <número del 0 al 3>,
-  "completitud": <número del 0 al 3>,
-  "justificacion": "<una oración explicando el puntaje>"
-}"""
+_evaluator_llm: OpenAILLMClient | None = None
 
 
-def _run_evaluation(bundle, response: RAGResponse) -> dict:
-    chunks_text = "\n\n".join(
-        f"[Fragmento {i+1} · similitud: {rc.similarity:.2f}]\n{rc.chunk.content}"
-        for i, rc in enumerate(response.chunks_related)
-    )
-    messages = [
-        {"role": "system", "content": _EVALUATOR_PROMPT},
-        {
-            "role": "user",
-            "content": (
-                f"## Pregunta\n{response.user_question}\n\n"
-                f"## Fragmentos recuperados\n{chunks_text}\n\n"
-                f"## Respuesta generada\n{response.system_answer}"
-            ),
-        },
-    ]
-    raw = bundle.pipeline._llm.chat(messages)
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        return {"error": "No se pudo parsear la evaluación", "raw": raw}
+def _get_evaluator_llm() -> OpenAILLMClient:
+    global _evaluator_llm
+    if _evaluator_llm is None:
+        _evaluator_llm = OpenAILLMClient(model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY"))
+    return _evaluator_llm
 
 
 @router.post("/evaluate", response_model=EvaluateResponse)
 def post_evaluate(body: QuestionRequest, request: Request) -> EvaluateResponse:
-    bundle = request.app.state.bundle
-    response = bundle.pipeline.ask(body.question)
-    result = response.to_dict()
-    result["evaluation"] = _run_evaluation(bundle, response)
-    return {"evaluate_result": result}
+    orchestrator = request.app.state.orchestrator
+    result = orchestrator.handle(body.question)
+    response = result.rag_response
+
+    eval_result = response.to_dict()
+    eval_result["intent"] = result.intent
+    eval_result["evaluation"] = evaluate_response(_get_evaluator_llm(), response)
+    return {"evaluate_result": eval_result}

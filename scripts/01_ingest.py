@@ -1,7 +1,9 @@
-"""Script 01 — Ingestión de documentos FAQ.
+"""Script 01 — Ingestión de las 3 bases de conocimiento (HR, Tech, Finance).
 
-Carga todos los .txt de data/, los chunkea y los guarda en ChromaDB.
-Ejecutar una vez antes de hacer consultas.
+Fuerza la construcción de cada agente de dominio, lo que dispara la
+ingesta perezosa de su carpeta data/<domain>_docs/ hacia su propia
+colección de Chroma si todavía está vacía (ver DomainAgent en
+src/agents/base.py).
 
 Uso:
     python scripts/01_ingest.py
@@ -10,33 +12,27 @@ Uso:
 import sys
 from pathlib import Path
 
+sys.stdout.reconfigure(encoding="utf-8")
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from factory import build_faq_bundle
+from agents import finance_agent, hr_agent, tech_agent
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+AGENTS = {
+    "HR": hr_agent.agent,
+    "Tech": tech_agent.agent,
+    "Finance": finance_agent.agent,
+}
 
 
 def main() -> None:
-    bundle = build_faq_bundle()
-    txt_files = list(DATA_DIR.glob("*.txt"))
-
-    if not txt_files:
-        print(f"No se encontraron archivos .txt en {DATA_DIR}")
-        return
-
-    total_chunks = 0
-    for file in txt_files:
-        chunks = bundle.indexer.index(str(file))
-        print(f"✓ {file.name} → {chunks} chunks indexados")
-        total_chunks += chunks
-
-    print(f"\nTotal: {total_chunks} chunks guardados en ChromaDB")
-    print(f"Colección tiene {bundle.indexer._store.count()} chunks en total")
+    for name, agent in AGENTS.items():
+        count = agent.count()
+        print(f"✓ {name} ({agent.config.collection_name}) → {count} chunks en Chroma")
 
 
 if __name__ == "__main__":
