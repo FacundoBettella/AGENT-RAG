@@ -1,11 +1,8 @@
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-from domain.exceptions import ContentBlockedError
-from domain.moderation import ModerationAction
 from domain.models import RAGResponse, RetrievedChunk
 from ports.llm import LLMClient
-from services.moderation_service import ModerationService
 from services.retriever import Retriever
 
 DEFAULT_SYSTEM_PROMPT = (
@@ -37,28 +34,25 @@ class RAGPipeline:
     | StrOutputParser), not a hand-built message list — this is the
     LangChain "chain" component the assignment asks for, and it's what
     Langfuse's callback handler traces as a single generation span.
+
+    Moderation is NOT checked here — it's the Orchestrator's job as the
+    system's single entry point (see ADR-007). This pipeline assumes its
+    input already passed that gate.
     """
 
     def __init__(
         self,
         retriever: Retriever,
         llm: LLMClient,
-        moderation: ModerationService,
         system_prompt: str = DEFAULT_SYSTEM_PROMPT,
     ) -> None:
         self._retriever = retriever
-        self._moderation = moderation
         prompt = ChatPromptTemplate.from_messages(
             [("system", system_prompt), ("user", _USER_TEMPLATE)]
         )
         self._chain = prompt | llm.model | StrOutputParser()
 
     def ask(self, question: str) -> RAGResponse:
-        risks, action, reason = self._moderation.check(question)
-
-        if action == ModerationAction.BLOCK:
-            raise ContentBlockedError(reason)
-
         retrieved = self._retriever.retrieve(question)
         answer = self._chain.invoke({
             "question": question,

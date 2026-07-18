@@ -167,3 +167,69 @@ LangChain y activo en el sistema multi-agente; FAISS queda como referencia
 de la arquitectura swappable, no como opción funcional del flujo actual.
 
 ---
+
+## ADR-006: Clasificación de intención con structured output (no texto libre, no embeddings, no keywords)
+
+**Contexto:** El orquestador necesita clasificar cada consulta en uno de 3
+dominios (o "fuera de alcance") antes de rutear al agente correcto.
+
+**Decisión:** Se usa `llm.with_structured_output(IntentClassification)`
+con un schema Pydantic (`intent: Literal["hr","tech","finance","unknown"]`
++ `reasoning: str`), compuesto en una chain LCEL
+(`prompt | structured_llm`).
+
+**Alternativas consideradas:**
+- *LLM con texto libre + parseo*: pedirle al LLM que responda "HR" o
+  "Finanzas" como string y parsear la respuesta. Se descartó porque el LLM
+  puede variar el formato (mayúsculas, sinónimos, texto extra) y no hay
+  garantía de que el valor esté dentro del enum esperado — cada variación
+  requeriría lógica de parseo defensiva ad-hoc.
+- *Similitud de embeddings*: embeber la pregunta y compararla contra
+  embeddings de ejemplos por dominio (o contra los propios chunks de cada
+  colección, quedándose con la de mayor similitud máxima). Es más barato
+  (sin llamada a LLM) pero le cuesta más a preguntas ambiguas o compuestas
+  ("¿cuál es el límite de gasto de mi tarjeta de la empresa para
+  capacitación?" toca Finance y HR a la vez), y no da una señal de "fuera
+  de alcance" tan limpia como un label explícito.
+- *Keywords/regex*: más simple y predecible, pero no generaliza a
+  parafraseos y requiere mantenimiento manual de listas de palabras por
+  dominio, igual que la Capa 3 de moderación — aceptable ahí porque es una
+  lista cerrada de riesgos, pero no para clasificar lenguaje natural
+  abierto.
+
+**Consecuencias:** agrega la dependencia de que el modelo soporte tool
+calling / structured output (los modelos de OpenAI usados sí lo soportan).
+El campo `reasoning` no se usa para tomar la decisión de ruteo, pero se
+guarda y se traza en Langfuse — es precisamente lo que permite depurar
+misclassifications sin adivinar por qué el LLM eligió un dominio.
+
+---
+
+## ADR-007: Moderación como gate único del orquestador (se saca de RAGPipeline)
+
+**Contexto:** El ADR-003 ya estableció que la moderación se integra "antes
+del orquestador". Con el orquestador como único punto de entrada del
+sistema (los agentes de dominio no se llaman directamente), mantener el
+chequeo de moderación *también* dentro de cada `RAGPipeline` generaría dos
+entradas de auditoría por pregunta (una en el orquestador, otra en el
+agente ruteado) para el mismo texto evaluado por el mismo evaluador
+determinístico — pura duplicación sin valor.
+
+**Decisión:** El chequeo de moderación se movió al `Orchestrator.handle()`,
+como el primer paso antes de clasificar. `RAGPipeline` ya no depende de
+`ModerationService` ni de `ContentBlockedError`.
+
+**Alternativas consideradas:**
+- *Dejar la moderación en RAGPipeline y agregar otra en el orquestador*:
+  "defensa en profundidad", pero con doble log por pregunta y un chequeo
+  redundante (mismo evaluador, mismo texto, mismo resultado determinístico)
+  que no agrega seguridad real, solo ruido en el log de auditoría.
+
+**Consecuencias:** cualquier código que instancie un `DomainAgent` o
+`RAGPipeline` fuera del orquestador (por ejemplo, en un test unitario o un
+script puntual) queda sin protección de moderación — es una decisión
+consciente: en este sistema el orquestador es la única puerta de entrada.
+La API FastAPI (próxima fase) debe rutear a través del orquestador, no
+llamar a un agente de dominio directamente, para no perder esta protección.
+
+---

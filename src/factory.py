@@ -16,6 +16,19 @@ from services.pipeline import DEFAULT_SYSTEM_PROMPT, RAGPipeline
 from services.retriever import Retriever
 
 
+def build_moderation_service() -> ModerationService:
+    """Shared wiring for the moderation gate — used by the Orchestrator,
+    the system's single entry point (see ADR-007). Not used by
+    build_faq_bundle/RAGPipeline anymore.
+    """
+    log_hash_salt = os.getenv("LOG_HASH_SALT", "m2-default-salt-change-me")
+    logs_dir = os.getenv("LOGS_DIR", "logs")
+    return ModerationService(
+        evaluator=ModerationEvaluator(salt=log_hash_salt),
+        log_repository=JsonLogRepository(logs_dir=logs_dir),
+    )
+
+
 @dataclass
 class FAQBundle:
     indexer: Indexer
@@ -44,8 +57,6 @@ def build_faq_bundle(
     (which has no native collection concept) for this multi-agent system.
     """
     api_key = os.getenv("OPENAI_API_KEY")
-    log_hash_salt = os.getenv("LOG_HASH_SALT", "m2-default-salt-change-me")
-    logs_dir = os.getenv("LOGS_DIR", "logs")
 
     embedder = OpenAIEmbedder(model=embedding_model, api_key=api_key)
 
@@ -68,10 +79,6 @@ def build_faq_bundle(
 
     llm = OpenAILLMClient(model=chat_model, api_key=api_key)
     retriever = Retriever(store=store, top_k=top_k)
-    moderation = ModerationService(
-        evaluator=ModerationEvaluator(salt=log_hash_salt),
-        log_repository=JsonLogRepository(logs_dir=logs_dir),
-    )
-    pipeline = RAGPipeline(retriever=retriever, llm=llm, moderation=moderation, system_prompt=system_prompt)
+    pipeline = RAGPipeline(retriever=retriever, llm=llm, system_prompt=system_prompt)
 
     return FAQBundle(indexer=indexer, pipeline=pipeline)
