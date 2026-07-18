@@ -233,3 +233,41 @@ La API FastAPI (próxima fase) debe rutear a través del orquestador, no
 llamar a un agente de dominio directamente, para no perder esta protección.
 
 ---
+
+## ADR-008: test_queries.json — caso real de misclassification detectado y corregido
+
+**Contexto:** Al armar `test_queries.json` (18 casos: 4 por dominio + 6
+casos borde de fuera-de-alcance/ambigüedad/moderación) y correrlos contra
+el orquestador con `scripts/05_test_routing.py`, el primer run dio
+**17/18 (94%)**, no 100%.
+
+El caso que falló: *"¿Qué herramientas de diseño puedo usar como viewer si
+no soy del equipo de Producto?"* — esperado `tech`, clasificado como
+`unknown`. El campo `reasoning` (trazado justamente para depurar esto)
+mostró por qué: *"no pertenece a los departamentos de rrhh, tecnología o
+finanzas"*. El prompt de clasificación describía el bucket `tech` como
+"hardware, accesos, contraseñas, VPN, seguridad informática, software,
+entornos de desarrollo" — la palabra suelta "software" no bastaba para que
+el LLM asociara "herramientas de diseño" con IT, aunque la base de
+conocimiento de `tech_docs` sí cubre exactamente ese tema
+(`it_software_tools.txt`, sección de Figma/licencias).
+
+**Decisión:** se reescribió la descripción del bucket `tech` para ser
+explícita sobre licencias/uso de herramientas de software en general
+("mensajería, gestión de proyectos, diseño, IDEs, etc. — sin importar el
+área que las use"), sin tocar ningún otro bucket. Re-correr la suite dio
+**18/18 (100%)**.
+
+**Por qué esto importa (más que el resultado en sí):** es el flujo de
+trabajo real que la consigna pide poder hacer con observability — sin el
+campo `reasoning` (ADR-006) hubiera sido necesario adivinar por qué el LLM
+clasificó mal, en vez de leer directamente su justificación y corregir el
+prompt con precisión quirúrgica. `test_queries.json` no se ajustó para
+"pasar" (no se cambió la pregunta ni el expected_intent): se corrigió el
+sistema para que clasifique correctamente un caso legítimo.
+
+**Consecuencias:** 100% en 18 casos no es una garantía estadística fuerte
+(muestra chica), pero documenta el proceso reproducible de detectar y
+corregir misclassifications — que es lo que se evalúa, no el número en sí.
+
+---
