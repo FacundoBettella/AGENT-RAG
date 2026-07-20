@@ -1,184 +1,249 @@
-# M2 Project — FAQ Chatbot con RAG
+# Sistema Multi-Agente de Soporte Interno (HR / IT / Finance)
 
-## Contexto y Objetivos
+Un **Agente Orquestador** clasifica la intención de una consulta de empleado y la enruta,
+de forma condicional, al **Agente RAG especializado** correspondiente (HR, IT/Tech o
+Finanzas). Todo el flujo dinámico está implementado con **LangChain** (LCEL) y trazado de
+punta a punta con **Langfuse**. Incluye moderación pre-LLM y un evaluador automático
+(LLM-as-judge) que puntúa cada respuesta.
 
-Eres un/a ingeniero/a de IA en una empresa de HR SaaS con mucha documentación. El
-equipo de soporte al cliente recibe más de 200 preguntas repetitivas al día sobre políticas,
-funcionalidades y procedimientos que ya están documentados en FAQs internas y guías. Tu
-equipo necesita un Chatbot inteligente de soporte para FAQs que pueda responder al
-instante recuperando información relevante de la documentación de la empresa, sin requerir
-búsquedas manuales ni intervención de agentes.
-
-## Objetivos
-
-- Implementar un sistema de FAQs basado en RAG que procese un documento de texto
-  plano, lo divida en chunks de forma inteligente (mínimo 20 chunks), genere embeddings y
-  los almacene para una recuperación eficiente.
-- Construir un pipeline de consulta que acepte preguntas de usuarios, realice búsqueda
-  vectorial (ANN/HNSW), recupere los chunks relevantes y genere respuestas precisas con
-  un LLM.
-- El sistema debe devolver JSON estructurado con `user_question`, `system_answer` y
-  `chunks_related` para asegurar transparencia y auditabilidad.
-- **Opcional**: implementar un agente evaluador que puntúe la calidad de la respuesta (0–10)
-  según la relevancia de los chunks, la precisión y la completitud.
+> Este proyecto arrancó como un chatbot FAQ de un solo dominio (arquitectura hexagonal
+> `domain/ports/adapters/services`) y se migró a este sistema multi-agente. El *por qué* de
+> cada decisión técnica (LangChain vs. código custom, LCEL vs. `create_agent`, Chroma vs.
+> FAISS, Langfuse v4 vs. v2, etc.) está documentado como ADRs en
+> [`docs/DECISIONS.md`](docs/DECISIONS.md) — léelo si algo acá parece "¿por qué así y no de
+> otra forma?".
 
 ## Arquitectura
 
-```
-domain/     → DTOs inmutables (FAQDocument, Chunk, RAGResponse) + excepciones
-ports/      → Protocols/interfaces (Embedder, VectorStore, LLMClient, LogRepository)
-adapters/   → implementaciones concretas (OpenAI, ChromaDB, TextLoader, JsonLog)
-services/   → lógica de negocio (Chunker, Retriever, Pipeline, ModerationService)
-factory.py  → único lugar que importa adapters concretos
-```
-
-## Vector Store — FAISS y tipos de índice
-
-**FAISS** (Facebook AI Similarity Search) es la *librería* que implementa los algoritmos de búsqueda vectorial. No es un tipo de índice en sí mismo — es el motor que los contiene. ChromaDB usa HNSW internamente; FAISS te da acceso directo a cada tipo.
-
-### Qué es cada tipo
-
-| Tipo | Estrategia | Exactitud | Velocidad | Memoria |
-|---|---|---|---|---|
-| **Flat** | Compara contra todos los vectores (fuerza bruta) | 100% | Lenta a escala | Alta |
-| **HNSW** | Grafo multicapa: capas altas saltan lejos, capas bajas refinan | ~95-99% | Muy rápida | Media-alta |
-| **IVF** | Agrupa vectores en clusters; busca solo en los clusters cercanos | ~90-95% | Muy rápida a escala | Media |
-| **PQ** | Comprime vectores para ahorrar RAM (como foto en baja resolución) | ~85-90% | Rápida | Muy baja |
-
-### Comparativa visual
+Arquitectura hexagonal: la lógica de negocio no conoce a LangChain directamente, lo usa
+*a través* de los adapters.
 
 ```
-Exactitud   Flat  ████████████████████████  100%
-            HNSW  ████████████████████      ~97%
-            IVF   ████████████████          ~92%
-            PQ    ████████████              ~87%
-
-Velocidad   Flat  ████
-            HNSW  ████████████████
-            IVF   ████████████████████
-            PQ    ████████████████████████
-
-Memoria     Flat  ████████████████████████
-            HNSW  ████████████████
-            IVF   ████████████
-            PQ    ████
+domain/     → DTOs inmutables (Chunk, RAGResponse) + ModerationAction + excepciones
+ports/      → Protocols (Embedder, VectorStore, LLMClient, LogRepository)
+adapters/   → implementaciones concretas -- LangChain vive ACÁ adentro
+              (chroma_store.py usa langchain_chroma, openai_llm.py usa langchain_openai,
+              tracing.py usa el CallbackHandler de Langfuse)
+services/   → Chunker, Indexer, Retriever, RAGPipeline (chain LCEL), ModerationService, evaluator
+agents/     → DomainAgent (HR/Tech/Finance) + Orchestrator (clasificación + ruteo)
+api/        → FastAPI: expone el orquestador por HTTP
+factory.py  → único lugar que instancia adapters concretos
 ```
 
-### Elección para este proyecto: `IndexHNSWFlat`
+### ¿Qué es "hexagonal" y cómo funciona acá?
 
-Con ~20-50 chunks cualquier índice sería igual de rápido, pero se usa HNSW porque:
+La idea (puertos y adaptadores): la lógica de negocio (`services/`, `agents/`) depende de
+**interfaces** (`ports/`, `Protocol` de Python), nunca de una librería o proveedor concreto.
+Cada implementación real (`adapters/`) cumple esa interfaz, y **un solo lugar** (`factory.py`)
+decide cuál usar. Así se puede cambiar de proveedor sin tocar la lógica de negocio.
 
-- Es el estándar en producción para RAG systems reales
-- Ofrece el mejor balance exactitud/velocidad sin necesitar entrenamiento previo (como IVF)
+Ejemplo concreto de este repo: `ports/vector_store.py` define el contrato (`add`/`query`/
+`count`). `ChromaStore` y `FAISSStore` lo implementan; `Retriever` y `RAGPipeline` solo
+conocen el `Protocol`, nunca importan Chroma o FAISS directamente. `factory.py` es el único
+que elige `ChromaStore` (ver ADR-005). Mismo patrón con `ports/llm.py` (`OpenAILLMClient` es
+la única implementación hoy, pero nada impide agregar un adapter para otro proveedor).
 
-### Dónde entra FAISS en la arquitectura
+Matiz importante: a diferencia del hexagonal "de libro", acá los `ports` sí exponen tipos de
+LangChain (`BaseChatModel`) a propósito, para que el resto del código pueda componer chains
+LCEL (`prompt | llm.model | parser`) sin reimplementar esa composición — LangChain vive
+*dentro* de los adapters, pero su tipo de "modelo componible" se deja pasar por el port (ver
+ADR-002).
+
+## Flujos
+
+### 1. Consulta end-to-end (`Orchestrator.handle()`)
+
+Este es el flujo real por cada pregunta que entra al sistema, sea por API, script o notebook:
 
 ```
-ports/vector_store.py     → Protocol (interfaz)
-adapters/chroma_store.py  → implementación con ChromaDB  (usa HNSW internamente)
-adapters/faiss_store.py   → implementación con FAISS     (IndexHNSWFlat explícito)
-factory.py                → elige cuál usar
+pregunta
+   │
+   ▼
+① Moderación (3 capas, ver abajo) ──► BLOCK ──► ContentBlockedError (corta acá, 0 tokens gastados)
+   │ ALLOW / FLAG
+   ▼
+② Clasificación de intención (LLM, structured output, temperature=0)
+   │   hr | tech | finance | unknown
+   ▼
+③ Enrutamiento condicional
+   │
+   ├── unknown ──► respuesta fija "fuera de alcance" (no llama a ningún agente)
+   │
+   └── hr/tech/finance ──► Agente de dominio elegido:
+                              retrieve (top-k Chroma) → chain LCEL
+                              (prompt | chat_model | parser) → respuesta
+   ▼
+OrchestratorResponse(question, intent, reasoning, rag_response, trace_id)
 ```
 
-Son adapters intercambiables. El pipeline no sabe cuál está corriendo.
+Los 3 agentes de dominio (`agents/hr_agent.py`, `tech_agent.py`, `finance_agent.py`) son la
+misma clase `DomainAgent → RAGPipeline`, parametrizada con distinta colección de Chroma,
+carpeta de `data/` y system prompt (`agents/base.py`). El orquestador es el **único** punto
+de entrada — los agentes de dominio no se llaman directos en producción.
 
----
+### 2. Ingesta (perezosa, por colección)
 
-## Seguridad — Capas de validación pre-OpenAI
+```
+primer .ask() a un dominio
+   │
+   ▼
+¿su colección de Chroma está vacía? ──► no ──► usa lo que ya está indexado
+   │ sí
+   ▼
+data/<dominio>_docs/*.txt → TextLoader → Chunker (RecursiveCharacterTextSplitter)
+   → OpenAIEmbeddings → Chroma.add() (colección propia del dominio)
+```
 
-El sistema aplica 3 capas de validación **antes** de enviar cualquier request a OpenAI. Si una pregunta es bloqueada, se devuelve un JSON de error y **no se consumen tokens**.
+Las 3 colecciones (`hr_docs`, `tech_docs`, `finance_docs`) viven en un mismo
+`persist_directory` (`.chroma/`) — ChromaDB soporta múltiples colecciones nombradas en un
+solo cliente persistente (ver ADR-005).
+
+### 3. Tracing (Langfuse)
+
+```
+Orchestrator.handle()  ──@observe──►  abre 1 span raíz = 1 trace por pregunta
+   │
+   ├─ classify()  (callbacks=[handler]) ──► span "chain" + span "generation" (clasificador)
+   │
+   └─ agent.ask() (callbacks=[handler]) ──► span "chain" + span "generation" (respuesta)
+```
+
+Un `CallbackHandler` nuevo por request se pasa a ambas llamadas; como corren dentro del
+span abierto por `@observe`, anidan automáticamente bajo el mismo trace (contexto de
+OpenTelemetry). Si `LANGFUSE_PUBLIC_KEY`/`SECRET_KEY` no están seteadas, el cliente se
+autodeshabilita con un warning — el sistema responde igual, tracing es best-effort, no una
+dependencia dura (ver ADR-010/011).
+
+### 4. Evaluación (bonus — LLM-as-judge + Score API)
+
+```
+OrchestratorResponse (ya con trace_id)
+   │
+   ▼
+evaluate_response() ──► LLM juez puntúa 0-10 (relevancia / precisión / completitud)
+   │
+   ▼
+push_evaluation_score(trace_id, evaluación) ──► Langfuse Score API
+                                                 (el score queda asociado al trace de esa pregunta)
+```
+
+Conectado en `POST /api/evaluate` y en `scripts/03_evaluate.py`.
+
+## Seguridad — capas de validación pre-LLM
+
+3 capas corren **antes** de gastar cualquier token, dentro de `Orchestrator.handle()`:
 
 | Capa | Qué detecta | Técnica | Acción |
 |---|---|---|---|
 | 1 — Datos sensibles | Tarjetas de crédito (Visa/MC/Amex), CUIT/CUIL, SSN | Regex | BLOCK |
 | 2 — Lenguaje abusivo | Hate speech, violencia, autolesión, cyber abuse | Keywords | BLOCK |
-| 3 — Prompt injection | Framing adversarial (`roleplay`, `ignore instructions`, etc.) + tokens sensibles | Keywords combinados | BLOCK / FLAG |
+| 3 — Prompt injection | Framing adversarial (`roleplay`, `ignore instructions`, etc.) + token sensible | Keywords combinados | BLOCK / FLAG |
 
-Todos los eventos de moderación se registran en `logs/moderation_events.jsonl` (campos hasheados para GDPR).
+Todo evento (`ALLOW`/`FLAG`/`BLOCK`) se audita en `logs/moderation_events.jsonl` (texto
+original hasheado, nunca en claro; retención distinta según severidad). Si el resultado es
+`BLOCK`, se lanza `ContentBlockedError` y la API responde `400` sin llegar a clasificar ni a
+llamar a OpenAI. `FLAG` no bloquea: queda en el log de auditoría y la pregunta se responde
+normal.
 
-**Flujo por pregunta:**
+## Tecnologías
 
-```
-pregunta → [Capa 1] → [Capa 2] → [Capa 3] → embeddings (OpenAI) → LLM (OpenAI)
-```
-
-Si la pregunta es bloqueada en cualquier capa, el pipeline se detiene y devuelve:
-
-```json
-{"error": "contenido_bloqueado", "detalle": "<motivo>"}
-```
+| Componente | Uso |
+|---|---|
+| **LangChain** (`langchain-core`, `langchain-openai`, `langchain-chroma`) | Chains LCEL (`prompt \| llm \| parser`), structured output, integración con Chroma. LangChain 1.x — LCEL puro, no `create_agent` ni `langchain-classic` (ver ADR-004). |
+| **OpenAI** | Chat (`gpt-4o-mini`) para clasificación, generación y evaluación; `text-embedding-3-small` para embeddings. |
+| **ChromaDB** | Vector store primario, multi-colección (una por dominio). FAISS sigue existiendo como adapter alternativo del mismo port, no migrado ni usado en este flujo (ADR-005). |
+| **Langfuse v4** (OTel-based) | Tracing end-to-end + Score API para el evaluador. Ojo: v4 tiene una API distinta a la v2 de la mayoría de tutoriales (ADR-010). |
+| **Pydantic** | Schema de clasificación estructurada (`IntentClassification`) y modelos de la API. |
+| **FastAPI** | Expone el orquestador por HTTP (`/query`, `/evaluate`, `/ingest`, `/health`). |
 
 ## Setup
 
 ```bash
+python -m venv .venv
+.venv\Scripts\activate            # Windows
 pip install -r requirements.txt
 cp .env.example .env
-# Completar OPENAI_API_KEY y LOG_HASH_SALT en .env
 ```
 
-## Variables de entorno
+Completar en `.env`:
 
 | Variable | Descripción | Default |
 |---|---|---|
 | `OPENAI_API_KEY` | API key de OpenAI | — |
-| `LOG_HASH_SALT` | Salt para hashear inputs en los logs (GDPR) | `m2-default-salt-change-me` |
-| `LOGS_DIR` | Carpeta para logs de moderación | `logs` |
+| `LOG_HASH_SALT` | Salt para hashear inputs en logs de moderación | `m2-default-salt-change-me` |
+| `LOGS_DIR` | Carpeta de logs de moderación | `logs` |
+| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` | Keys de tu proyecto en [cloud.langfuse.com](https://cloud.langfuse.com) (cuenta gratuita) | — (sin esto, tracing se desactiva solo) |
+| `LANGFUSE_BASE_URL` | Región de Langfuse Cloud | `https://cloud.langfuse.com` |
 
 ## Uso
 
-```bash
-# 1. Ingestar el documento de FAQs
-python scripts/01_ingest.py
+**Notebook** (`multi_agent_system.ipynb`) — correr las celdas en orden, 6 secciones:
+setup → carga de vector stores → definición de agentes → orquestador y enrutamiento →
+pruebas (`test_queries.json`, 21 casos) → integración con Langfuse. Kernel: el `.venv` del
+proyecto.
 
-# 2. Verificar embeddings generados
-python scripts/02_embed.py
+**Scripts** (útiles para probar sin notebook):
 
-# 3. Consultar el sistema
-python scripts/03_query.py
+| Script | Para qué sirve |
+|---|---|
+| `01_ingest.py` | Fuerza la ingesta de las 3 knowledge bases a Chroma (si ya están indexadas, no hace nada). |
+| `02_query.py "<pregunta>"` | Consulta puntual al orquestador completo, imprime JSON. |
+| `03_evaluate.py "<pregunta>"` | Igual que `02_query`, + evaluación LLM-as-judge. |
+| `05_test_routing.py` | Corre `test_queries.json` completo (21 casos) contra el orquestador, con desglose por categoría. |
+| `04_serve.py` | Levanta la API FastAPI en `:8000`. |
 
-# 4. Evaluar calidad (opcional)
-python scripts/04_evaluate.py
-```
+**API** (`python scripts/04_serve.py`, docs interactivas en `/docs`):
+
+| Endpoint | Qué hace |
+|---|---|
+| `POST /api/query` | Pregunta → orquestador → intent + respuesta + chunks |
+| `POST /api/evaluate` | Igual que `/query` + score del LLM-as-judge (empujado a Langfuse) |
+| `POST /api/ingest` | Agrega documentos a un dominio |
+| `GET /api/health` | Chunks indexados por colección |
+
+## Producción y notas operativas
+
+- **Chroma** (`.chroma/`, en la raíz del proyecto) y **logs** (`logs/moderation_events.jsonl`)
+  se resuelven siempre contra la raíz del repo (`factory.py::_resolve`), nunca contra el
+  directorio desde donde arrancaste el proceso — así el mismo archivo se usa sin importar si
+  lanzás el servidor desde la raíz o desde `src/`.
+- **Para producción**: `.chroma/` es un directorio local en disco — no sirve tal cual para
+  múltiples réplicas/contenedores sin un volumen compartido. A esa escala conviene un Chroma
+  en modo cliente-servidor (o un vector store gestionado) en vez del `PersistentClient` local
+  que usa `ChromaStore` hoy.
+- **Logs de moderación**: hoy son un `.jsonl` en disco (ver capas de seguridad, arriba). En
+  producción conviene mandarlos a un sistema centralizado (no un archivo local por instancia)
+  para que la auditoría sobreviva a un restart/redeploy.
+- **Langfuse**: ver flujo #3 más arriba — tracing es asíncrono (batch en background thread),
+  no bloquea el request; si no hay credenciales, se desactiva solo.
 
 ## Estructura de directorios
 
 ```
-M2-project/
-├── README.md
-├── requirements.txt
-├── .env.example
-├── data/               ← documento de FAQs (.txt)
-├── logs/               ← moderation_events.jsonl (auto-generado)
-├── src/m2project/
-│   ├── domain/
-│   │   ├── models.py       ← DTOs (FAQDocument, Chunk, RAGResponse)
-│   │   ├── moderation.py   ← ModerationAction enum
-│   │   └── exceptions.py   ← ContentBlockedError
-│   ├── ports/
-│   │   ├── llm.py          ← LLMClient protocol
-│   │   ├── embedder.py     ← Embedder protocol
-│   │   ├── vector_store.py ← VectorStore protocol
-│   │   └── log_repository.py ← LogRepository protocol
-│   ├── adapters/
-│   │   ├── openai_llm.py   ← OpenAI chat completions
-│   │   ├── openai_embedder.py ← OpenAI embeddings
-│   │   ├── chroma_store.py ← ChromaDB
-│   │   ├── text_loader.py  ← carga de .txt
-│   │   └── json_log.py     ← logs de moderación en JSONL
-│   ├── services/
-│   │   ├── chunker.py
-│   │   ├── indexer.py
-│   │   ├── retriever.py
-│   │   ├── pipeline.py     ← RAGPipeline (incluye validación)
-│   │   └── moderation_service.py ← 3 capas de validación
+├── multi_agent_system.ipynb
+├── test_queries.json          ← 21 casos (12 domain + 3 out_of_scope + 2 ambiguous + 4 moderation)
+├── data/{hr,tech,finance}_docs/
+├── logs/moderation_events.jsonl   (auto-generado)
+├── docs/DECISIONS.md          ← ADRs (el "por qué" de cada decisión técnica)
+├── src/
+│   ├── domain/     modelos, ModerationAction, excepciones
+│   ├── ports/      Protocols (Embedder, VectorStore, LLMClient, LogRepository)
+│   ├── adapters/   OpenAI, Chroma, FAISS, TextLoader, JsonLog, tracing (Langfuse)
+│   ├── services/   Chunker, Indexer, Retriever, RAGPipeline, ModerationService, evaluator
+│   ├── agents/     hr_agent.py, tech_agent.py, finance_agent.py, orchestrator.py, base.py
+│   ├── api/        FastAPI app + routes (query, evaluate, ingest, health)
 │   └── factory.py
-└── scripts/
-    ├── 01_ingest.py    ← carga y chunkea el documento
-    ├── 02_query.py     ← hace preguntas, devuelve JSON
-    └── 03_evaluate.py  ← evaluador de calidad (opcional)
+└── scripts/        01_ingest, 02_query, 03_evaluate, 04_serve, 05_test_routing
 ```
 
-## Pendiente
+## Limitaciones conocidas
 
-- **Rate limiting**: limitar la cantidad de consultas por usuario en una ventana de tiempo para evitar uso abusivo y costos innecesarios en la API de OpenAI.
-- **Reintentos con backoff**: manejar errores transitorios de la API de OpenAI (429, 5xx) con reintentos automáticos y espera creciente entre intentos.
+- **Ingesta no incremental**: si editás un `.txt` después del primer uso, no se re-embebe
+  solo — hay que borrar `.chroma/` y volver a ingestar. Tampoco hay upsert idempotente
+  (correr la ingesta dos veces duplica contenido).
+- **FAISS no migrado a LangChain**: sigue siendo un adapter válido del mismo port, pero no
+  se usa en el flujo multi-agente actual (ADR-005).
+- **Sin memoria conversacional**: cada pregunta se procesa de forma independiente.
+- **Routing single-hop**: el orquestador elige un único dominio por pregunta; una consulta
+  genuinamente compuesta entre dos dominios no se divide ni se responde con múltiples
+  agentes (ver casos `amb-01`/`amb-02` en `test_queries.json`).
