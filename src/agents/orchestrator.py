@@ -15,6 +15,12 @@ Single entry point for the whole system. Order of operations per question:
 Domain agents (hr_agent, tech_agent, finance_agent) are not meant to be
 called directly by end users in this system; this orchestrator is the
 front door.
+
+`handle()` is also the tracing boundary (see ADR-011): it's wrapped with
+Langfuse's `@observe`, so one call = one trace. A single CallbackHandler is
+built per call and passed as `callbacks` into both the classification chain
+and the routed agent's generation chain, so both nest as child spans of
+that same trace instead of showing up as two unrelated traces.
 """
 
 from __future__ import annotations
@@ -24,9 +30,11 @@ from dataclasses import dataclass
 from typing import Literal
 
 from langchain_core.prompts import ChatPromptTemplate
+from langfuse import get_client, observe
 from pydantic import BaseModel, Field
 
 from adapters.openai_llm import OpenAILLMClient
+from adapters.tracing import build_langchain_handler
 from agents import finance_agent, hr_agent, tech_agent
 from agents.base import DomainAgent
 from domain.exceptions import ContentBlockedError
@@ -46,7 +54,8 @@ _CLASSIFICATION_SYSTEM_PROMPT = (
 _CLASSIFICATION_USER_TEMPLATE = (
     "Clasificá la siguiente consulta en uno de estos 4 valores:\n"
     "- 'hr': Recursos Humanos (sueldos, vacaciones, licencias, beneficios, "
-    "conducta, onboarding, desvinculación)\n"
+    "modalidad de trabajo/trabajo remoto o híbrido, conducta, onboarding, "
+    "desvinculación)\n"
     "- 'tech': IT Support / Tecnología (hardware, accesos, contraseñas, VPN, "
     "seguridad informática, entornos de desarrollo, y licencias/uso de "
     "herramientas de software en general -- mensajería, gestión de "
@@ -80,6 +89,10 @@ class OrchestratorResponse:
     intent: Intent
     reasoning: str
     rag_response: RAGResponse
+    # Langfuse trace id for this call (None if tracing isn't configured) --
+    # lets callers attach an LLM-as-judge score to this exact trace via the
+    # Score API instead of just returning it in an HTTP response (ADR-011).
+    trace_id: str | None = None
 
 
 class Orchestrator:
@@ -101,15 +114,18 @@ class Orchestrator:
         )
         self._classifier = prompt | structured_llm
 
-    def classify(self, question: str) -> IntentClassification:
-        return self._classifier.invoke({"question": question})
+    def classify(self, question: str, callbacks: list | None = None) -> IntentClassification:
+        config = {"callbacks": callbacks} if callbacks else None
+        return self._classifier.invoke({"question": question}, config=config)
 
+    @observe(name="orchestrator.handle")
     def handle(self, question: str) -> OrchestratorResponse:
         _risks, action, reason = self._moderation.check(question)
         if action == ModerationAction.BLOCK:
             raise ContentBlockedError(reason)
 
-        classification = self.classify(question)
+        handler = build_langchain_handler()
+        classification = self.classify(question, callbacks=[handler])
         agent = self._agents.get(classification.intent)
 
         if agent is None:
@@ -119,18 +135,22 @@ class Orchestrator:
                 chunks_related=[],
             )
         else:
-            rag_response = agent.ask(question)
+            rag_response = agent.ask(question, callbacks=[handler])
 
         return OrchestratorResponse(
             question=question,
             intent=classification.intent,
             reasoning=classification.reasoning,
             rag_response=rag_response,
+            trace_id=get_client().get_current_trace_id(),
         )
 
 
 def build_orchestrator(chat_model: str = "gpt-4o-mini") -> Orchestrator:
     api_key = os.getenv("OPENAI_API_KEY")
-    classifier_llm = OpenAILLMClient(model=chat_model, api_key=api_key)
+    # temperature=0: la clasificación es una tarea determinística (un label de
+    # un enum cerrado), no generación de texto -- no queremos variabilidad
+    # entre corridas para la misma pregunta.
+    classifier_llm = OpenAILLMClient(model=chat_model, api_key=api_key, temperature=0)
     moderation = build_moderation_service()
     return Orchestrator(classifier_llm=classifier_llm, moderation=moderation)

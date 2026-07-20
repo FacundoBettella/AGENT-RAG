@@ -42,8 +42,8 @@ class DomainAgent:
             )
         return self._bundle
 
-    def ask(self, question: str) -> RAGResponse:
-        return self._get_bundle().pipeline.ask(question)
+    def ask(self, question: str, callbacks: list | None = None) -> RAGResponse:
+        return self._get_bundle().pipeline.ask(question, callbacks=callbacks)
 
     def count(self) -> int:
         return self._get_bundle().indexer.count()

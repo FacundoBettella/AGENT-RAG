@@ -10,8 +10,13 @@ class OpenAILLMClient:
     LCEL chain (prompt | model | parser) instead of building strings by hand.
     """
 
-    def __init__(self, model: str = "gpt-4o-mini", api_key: str | None = None) -> None:
-        self.model = ChatOpenAI(model=model, api_key=api_key)
+    def __init__(
+        self,
+        model: str = "gpt-4o-mini",
+        api_key: str | None = None,
+        temperature: float | None = None,
+    ) -> None:
+        self.model = ChatOpenAI(model=model, api_key=api_key, temperature=temperature)
 
     def chat(self, messages: list[dict]) -> str:
         response = self.model.invoke(messages)

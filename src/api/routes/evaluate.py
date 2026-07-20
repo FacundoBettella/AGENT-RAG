@@ -3,6 +3,7 @@ import os
 from fastapi import APIRouter, Request
 
 from adapters.openai_llm import OpenAILLMClient
+from adapters.tracing import push_evaluation_score
 from api.schemas import EvaluateResponse, QuestionRequest
 from services.evaluator import evaluate_response
 
@@ -24,7 +25,10 @@ def post_evaluate(body: QuestionRequest, request: Request) -> EvaluateResponse:
     result = orchestrator.handle(body.question)
     response = result.rag_response
 
+    evaluation = evaluate_response(_get_evaluator_llm(), response)
+    push_evaluation_score(result.trace_id, evaluation)
+
     eval_result = response.to_dict()
     eval_result["intent"] = result.intent
-    eval_result["evaluation"] = evaluate_response(_get_evaluator_llm(), response)
+    eval_result["evaluation"] = evaluation
     return {"evaluate_result": eval_result}

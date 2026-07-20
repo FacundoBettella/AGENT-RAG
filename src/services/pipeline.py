@@ -52,12 +52,16 @@ class RAGPipeline:
         )
         self._chain = prompt | llm.model | StrOutputParser()
 
-    def ask(self, question: str) -> RAGResponse:
+    def ask(self, question: str, callbacks: list | None = None) -> RAGResponse:
         retrieved = self._retriever.retrieve(question)
-        answer = self._chain.invoke({
-            "question": question,
-            "context": self._format_context(retrieved),
-        })
+        config = {"callbacks": callbacks} if callbacks else None
+        answer = self._chain.invoke(
+            {
+                "question": question,
+                "context": self._format_context(retrieved),
+            },
+            config=config,
+        )
         return RAGResponse(
             user_question=question,
             system_answer=answer,
