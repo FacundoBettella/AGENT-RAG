@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Literal
 
 from adapters.chroma_store import ChromaStore
@@ -15,6 +16,19 @@ from services.moderation_service import ModerationEvaluator, ModerationService
 from services.pipeline import DEFAULT_SYSTEM_PROMPT, RAGPipeline
 from services.retriever import Retriever
 
+# src/factory.py -> parent.parent is the project root, regardless of the cwd
+# the process was launched from. Every relative on-disk path this module
+# hands to an adapter (logs, .chroma/, .faiss/, data/<domain>_docs) goes
+# through _resolve() so it doesn't depend on where `python ...` was invoked
+# from -- a script run via `python scripts/04_serve.py` from the repo root
+# and the same server started with cwd=src must land in the same files.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _resolve(path: str) -> str:
+    p = Path(path)
+    return str(p if p.is_absolute() else _PROJECT_ROOT / p)
+
 
 def build_moderation_service() -> ModerationService:
     """Shared wiring for the moderation gate — used by the Orchestrator,
@@ -22,7 +36,7 @@ def build_moderation_service() -> ModerationService:
     build_faq_bundle/RAGPipeline anymore.
     """
     log_hash_salt = os.getenv("LOG_HASH_SALT", "m2-default-salt-change-me")
-    logs_dir = os.getenv("LOGS_DIR", "logs")
+    logs_dir = _resolve(os.getenv("LOGS_DIR", "logs"))
     return ModerationService(
         evaluator=ModerationEvaluator(salt=log_hash_salt),
         log_repository=JsonLogRepository(logs_dir=logs_dir),
@@ -62,12 +76,12 @@ def build_faq_bundle(
 
     if vector_store == "faiss":
         from adapters.faiss_store import FAISSStore
-        store = FAISSStore(embedder=embedder, persist_path=f".faiss/{collection_name}")
+        store = FAISSStore(embedder=embedder, persist_path=_resolve(f".faiss/{collection_name}"))
     else:
         store = ChromaStore(
             embedder=embedder,
             collection_name=collection_name,
-            persist_directory=persist_directory,
+            persist_directory=_resolve(persist_directory),
         )
 
     loader = TextLoader()
@@ -75,7 +89,7 @@ def build_faq_bundle(
     indexer = Indexer(loader=loader, chunker=chunker, store=store)
 
     if data_dir is not None and store.count() == 0:
-        indexer.index(data_dir)
+        indexer.index(_resolve(data_dir))
 
     llm = OpenAILLMClient(model=chat_model, api_key=api_key)
     retriever = Retriever(store=store, top_k=top_k)
