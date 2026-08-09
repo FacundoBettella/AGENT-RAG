@@ -8,6 +8,25 @@ cada respuesta.
 Más detalle técnico: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (cómo está armado) y
 [`docs/DECISIONS.md`](docs/DECISIONS.md) (por qué se tomó cada decisión).
 
+## Alcance
+
+Responde preguntas de empleados en 3 dominios, contra una knowledge base de ejemplo
+(`data/`) de una SaaS company ficticia. Con `docker compose exec app python
+scripts/02_query.py "<pregunta>"` o vía `/api/query` podés preguntar cosas como:
+
+| Dominio | Ejemplos de lo que sabe responder |
+|---|---|
+| **HR** | Sueldos y liquidación, vacaciones y licencias, modalidad de trabajo (remoto/híbrido), beneficios, equity, relocation, promociones, onboarding/desvinculación, código de conducta, acoso y discriminación, bienestar y salud mental |
+| **IT / Tech** | Contraseñas y autenticación, VPN y acceso remoto, instalación de software, seguridad e incidentes, accesos a repos/CI-CD, entornos de desarrollo, hardware y periféricos, BYOD, herramientas aprobadas, mesa de ayuda |
+| **Finance** | Rendición de gastos, tarjeta corporativa, viajes corporativos, procurement y pago a proveedores, presupuesto por área, cierre contable, facturación a clientes, régimen impositivo, auditorías |
+
+Lo que **no** hace (a propósito, ver [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#limitaciones-conocidas)):
+
+- Preguntas fuera de esos 3 dominios (Legal, Ventas, etc.) → responde "fuera de alcance", no inventa una respuesta.
+- Preguntas compuestas que cruzan dos dominios a la vez → elige un solo dominio, no las divide.
+- Memoria conversacional → cada pregunta se resuelve sola, sin contexto de preguntas anteriores.
+- No está conectado a sistemas reales (HRIS, ITSM, ERP) — la knowledge base son `.txt` de ejemplo, pensados para mostrar el patrón de arquitectura, no para producción tal cual.
+
 ## Tecnologías
 
 | Componente | Uso |
