@@ -1,0 +1,16 @@
+.git
+.claude
+.vscode
+__pycache__
+*.pyc
+logs
+.chroma
+.chroma_*
+.faiss
+.env
+.env.example
+*.ipynb
+docs
+test_queries.json
+README.md
+CLAUDE.md

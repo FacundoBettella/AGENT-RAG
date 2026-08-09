@@ -16,3 +16,6 @@ langfuse>=4.0.0
 tiktoken>=0.7.0
 jupyter>=1.0.0
 ipykernel>=6.29.0
+
+# --- API docs UI (Postman-like "try it out" client, replaces Swagger UI) ---
+scalar-fastapi>=1.0.0

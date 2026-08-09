@@ -1,0 +1,24 @@
+name: agent-rag
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      # persisted so the vector store / audit log survive `docker compose down`
+      # instead of re-embedding the knowledge base and losing moderation
+      # history on every restart
+      - ./.chroma:/app/.chroma
+      - ./logs:/app/logs
+      # not needed to serve the API, but lets `docker compose exec app python
+      # scripts/...` replace the old venv-based workflow for scripts/*.py
+      - ./scripts:/app/scripts
+      - ./test_queries.json:/app/test_queries.json
+    command: uvicorn api.main:app --app-dir src --host 0.0.0.0 --port 8000 --reload

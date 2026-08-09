@@ -2,7 +2,6 @@
 .env
 __pycache__/
 *.pyc
-.venv/
 logs/
 .chroma/
 .chroma_*/

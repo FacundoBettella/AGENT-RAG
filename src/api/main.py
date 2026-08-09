@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from scalar_fastapi import get_scalar_api_reference
 
 load_dotenv()
 
@@ -39,3 +40,9 @@ app.include_router(ingest.router, prefix="/api")
 app.include_router(evaluate.router, prefix="/api")
 
 register_handlers(app)
+
+
+@app.get("/scalar", include_in_schema=False)
+def scalar_docs():
+    """Postman-like interactive API client, alternative to Swagger UI (/docs)."""
+    return get_scalar_api_reference(openapi_url=app.openapi_url, title=app.title)

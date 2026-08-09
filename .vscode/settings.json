@@ -1,26 +1,32 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
     "python.analysis.extraPaths": [
         "${workspaceFolder}/src"
     ],
     "workbench.colorCustomizations": {
-        "activityBar.activeBackground": "#3333ff",
-        "activityBar.background": "#3333ff",
-        "activityBar.foreground": "#e7e7e7",
-        "activityBar.inactiveForeground": "#e7e7e799",
-        "activityBarBadge.background": "#600000",
-        "activityBarBadge.foreground": "#e7e7e7",
-        "commandCenter.border": "#e7e7e799",
-        "sash.hoverBorder": "#3333ff",
-        "statusBar.background": "#0000ff",
-        "statusBar.foreground": "#e7e7e7",
-        "statusBarItem.hoverBackground": "#3333ff",
-        "statusBarItem.remoteBackground": "#0000ff",
-        "statusBarItem.remoteForeground": "#e7e7e7",
-        "titleBar.activeBackground": "#0000ff",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveBackground": "#0000ff99",
-        "titleBar.inactiveForeground": "#e7e7e799"
+        "activityBar.activeBackground": "#a3a32796",
+        "activityBar.background": "#dfdf1e34",
+        "activityBar.foreground": "#8f0505",
+        "activityBar.inactiveForeground": "#c0050599",
+        "activityBarBadge.background": "#b308089f",
+        "activityBarBadge.foreground": "#000000",
+        "commandCenter.border": "#00000099",
+        "sash.hoverBorder": "#ffff33",
+        "statusBar.background": "#c8ff00",
+        "statusBar.foreground": "#8b0909",
+        "statusBarItem.hoverBackground": "#cccc00",
+        "statusBarItem.remoteBackground": "#922525",
+        "statusBarItem.remoteForeground": "#000000",
+        "titleBar.activeBackground": "#ffff00a4",
+        "titleBar.activeForeground": "#000000",
+        "titleBar.inactiveBackground": "#ffff0099",
+        "titleBar.inactiveForeground": "#000000",
+        "activityBarTop.activeBackground": "#ffff33",
+        "activityBarTop.background": "#ffff33",
+        "activityBarTop.foreground": "#000000",
+        "activityBarTop.inactiveForeground": "#00000099",
+        "commandCenter.foreground": "#000000",
+        "statusBar.debuggingBackground": "#ffff00",
+        "statusBar.debuggingForeground": "#000000"
     },
-    "peacock.color": "blue"
+    "peacock.color": "yellow"
 }

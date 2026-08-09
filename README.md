@@ -2,168 +2,32 @@
 
 Un **Agente Orquestador** clasifica la intención de una consulta de empleado y la enruta,
 de forma condicional, al **Agente RAG especializado** correspondiente (HR, IT/Tech o
-Finanzas). Todo el flujo dinámico está implementado con **LangChain** (LCEL) y trazado de
-punta a punta con **Langfuse**. Incluye moderación pre-LLM y un evaluador automático
-(LLM-as-judge) que puntúa cada respuesta.
+Finanzas). Incluye moderación pre-LLM y un evaluador automático (LLM-as-judge) que puntúa
+cada respuesta.
 
-> Este proyecto arrancó como un chatbot FAQ de un solo dominio (arquitectura hexagonal
-> `domain/ports/adapters/services`) y se migró a este sistema multi-agente. El *por qué* de
-> cada decisión técnica (LangChain vs. código custom, LCEL vs. `create_agent`, Chroma vs.
-> FAISS, Langfuse v4 vs. v2, etc.) está documentado como ADRs en
-> [`docs/DECISIONS.md`](docs/DECISIONS.md) — léelo si algo acá parece "¿por qué así y no de
-> otra forma?".
-
-## Arquitectura
-
-Arquitectura hexagonal: la lógica de negocio no conoce a LangChain directamente, lo usa
-*a través* de los adapters.
-
-```
-domain/     → DTOs inmutables (Chunk, RAGResponse) + ModerationAction + excepciones
-ports/      → Protocols (Embedder, VectorStore, LLMClient, LogRepository)
-adapters/   → implementaciones concretas -- LangChain vive ACÁ adentro
-              (chroma_store.py usa langchain_chroma, openai_llm.py usa langchain_openai,
-              tracing.py usa el CallbackHandler de Langfuse)
-services/   → Chunker, Indexer, Retriever, RAGPipeline (chain LCEL), ModerationService, evaluator
-agents/     → DomainAgent (HR/Tech/Finance) + Orchestrator (clasificación + ruteo)
-api/        → FastAPI: expone el orquestador por HTTP
-factory.py  → único lugar que instancia adapters concretos
-```
-
-### ¿Qué es "hexagonal" y cómo funciona acá?
-
-La idea (puertos y adaptadores): la lógica de negocio (`services/`, `agents/`) depende de
-**interfaces** (`ports/`, `Protocol` de Python), nunca de una librería o proveedor concreto.
-Cada implementación real (`adapters/`) cumple esa interfaz, y **un solo lugar** (`factory.py`)
-decide cuál usar. Así se puede cambiar de proveedor sin tocar la lógica de negocio.
-
-Ejemplo concreto de este repo: `ports/vector_store.py` define el contrato (`add`/`query`/
-`count`). `ChromaStore` y `FAISSStore` lo implementan; `Retriever` y `RAGPipeline` solo
-conocen el `Protocol`, nunca importan Chroma o FAISS directamente. `factory.py` es el único
-que elige `ChromaStore` (ver ADR-005). Mismo patrón con `ports/llm.py` (`OpenAILLMClient` es
-la única implementación hoy, pero nada impide agregar un adapter para otro proveedor).
-
-Matiz importante: a diferencia del hexagonal "de libro", acá los `ports` sí exponen tipos de
-LangChain (`BaseChatModel`) a propósito, para que el resto del código pueda componer chains
-LCEL (`prompt | llm.model | parser`) sin reimplementar esa composición — LangChain vive
-*dentro* de los adapters, pero su tipo de "modelo componible" se deja pasar por el port (ver
-ADR-002).
-
-## Flujos
-
-### 1. Consulta end-to-end (`Orchestrator.handle()`)
-
-Este es el flujo real por cada pregunta que entra al sistema, sea por API, script o notebook:
-
-```
-pregunta
-   │
-   ▼
-① Moderación (3 capas, ver abajo) ──► BLOCK ──► ContentBlockedError (corta acá, 0 tokens gastados)
-   │ ALLOW / FLAG
-   ▼
-② Clasificación de intención (LLM, structured output, temperature=0)
-   │   hr | tech | finance | unknown
-   ▼
-③ Enrutamiento condicional
-   │
-   ├── unknown ──► respuesta fija "fuera de alcance" (no llama a ningún agente)
-   │
-   └── hr/tech/finance ──► Agente de dominio elegido:
-                              retrieve (top-k Chroma) → chain LCEL
-                              (prompt | chat_model | parser) → respuesta
-   ▼
-OrchestratorResponse(question, intent, reasoning, rag_response, trace_id)
-```
-
-Los 3 agentes de dominio (`agents/hr_agent.py`, `tech_agent.py`, `finance_agent.py`) son la
-misma clase `DomainAgent → RAGPipeline`, parametrizada con distinta colección de Chroma,
-carpeta de `data/` y system prompt (`agents/base.py`). El orquestador es el **único** punto
-de entrada — los agentes de dominio no se llaman directos en producción.
-
-### 2. Ingesta (perezosa, por colección)
-
-```
-primer .ask() a un dominio
-   │
-   ▼
-¿su colección de Chroma está vacía? ──► no ──► usa lo que ya está indexado
-   │ sí
-   ▼
-data/<dominio>_docs/*.txt → TextLoader → Chunker (RecursiveCharacterTextSplitter)
-   → OpenAIEmbeddings → Chroma.add() (colección propia del dominio)
-```
-
-Las 3 colecciones (`hr_docs`, `tech_docs`, `finance_docs`) viven en un mismo
-`persist_directory` (`.chroma/`) — ChromaDB soporta múltiples colecciones nombradas en un
-solo cliente persistente (ver ADR-005).
-
-### 3. Tracing (Langfuse)
-
-```
-Orchestrator.handle()  ──@observe──►  abre 1 span raíz = 1 trace por pregunta
-   │
-   ├─ classify()  (callbacks=[handler]) ──► span "chain" + span "generation" (clasificador)
-   │
-   └─ agent.ask() (callbacks=[handler]) ──► span "chain" + span "generation" (respuesta)
-```
-
-Un `CallbackHandler` nuevo por request se pasa a ambas llamadas; como corren dentro del
-span abierto por `@observe`, anidan automáticamente bajo el mismo trace (contexto de
-OpenTelemetry). Si `LANGFUSE_PUBLIC_KEY`/`SECRET_KEY` no están seteadas, el cliente se
-autodeshabilita con un warning — el sistema responde igual, tracing es best-effort, no una
-dependencia dura (ver ADR-010/011).
-
-### 4. Evaluación (bonus — LLM-as-judge + Score API)
-
-```
-OrchestratorResponse (ya con trace_id)
-   │
-   ▼
-evaluate_response() ──► LLM juez puntúa 0-10 (relevancia / precisión / completitud)
-   │
-   ▼
-push_evaluation_score(trace_id, evaluación) ──► Langfuse Score API
-                                                 (el score queda asociado al trace de esa pregunta)
-```
-
-Conectado en `POST /api/evaluate` y en `scripts/03_evaluate.py`.
-
-## Seguridad — capas de validación pre-LLM
-
-3 capas corren **antes** de gastar cualquier token, dentro de `Orchestrator.handle()`:
-
-| Capa | Qué detecta | Técnica | Acción |
-|---|---|---|---|
-| 1 — Datos sensibles | Tarjetas de crédito (Visa/MC/Amex), CUIT/CUIL, SSN | Regex | BLOCK |
-| 2 — Lenguaje abusivo | Hate speech, violencia, autolesión, cyber abuse | Keywords | BLOCK |
-| 3 — Prompt injection | Framing adversarial (`roleplay`, `ignore instructions`, etc.) + token sensible | Keywords combinados | BLOCK / FLAG |
-
-Todo evento (`ALLOW`/`FLAG`/`BLOCK`) se audita en `logs/moderation_events.jsonl` (texto
-original hasheado, nunca en claro; retención distinta según severidad). Si el resultado es
-`BLOCK`, se lanza `ContentBlockedError` y la API responde `400` sin llegar a clasificar ni a
-llamar a OpenAI. `FLAG` no bloquea: queda en el log de auditoría y la pregunta se responde
-normal.
+Más detalle técnico: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (cómo está armado) y
+[`docs/DECISIONS.md`](docs/DECISIONS.md) (por qué se tomó cada decisión).
 
 ## Tecnologías
 
 | Componente | Uso |
 |---|---|
-| **LangChain** (`langchain-core`, `langchain-openai`, `langchain-chroma`) | Chains LCEL (`prompt \| llm \| parser`), structured output, integración con Chroma. LangChain 1.x — LCEL puro, no `create_agent` ni `langchain-classic` (ver ADR-004). |
+| **LangChain** (`langchain-core`, `langchain-openai`, `langchain-chroma`) | Chains LCEL (`prompt \| llm \| parser`), structured output, integración con Chroma. LangChain 1.x — LCEL puro, no `create_agent`. |
 | **OpenAI** | Chat (`gpt-4o-mini`) para clasificación, generación y evaluación; `text-embedding-3-small` para embeddings. |
-| **ChromaDB** | Vector store primario, multi-colección (una por dominio). FAISS sigue existiendo como adapter alternativo del mismo port, no migrado ni usado en este flujo (ADR-005). |
-| **Langfuse v4** (OTel-based) | Tracing end-to-end + Score API para el evaluador. Ojo: v4 tiene una API distinta a la v2 de la mayoría de tutoriales (ADR-010). |
-| **Pydantic** | Schema de clasificación estructurada (`IntentClassification`) y modelos de la API. |
-| **FastAPI** | Expone el orquestador por HTTP (`/query`, `/evaluate`, `/ingest`, `/health`). |
+| **ChromaDB** | Vector store primario, multi-colección (una por dominio). |
+| **Langfuse v4** (OTel-based) | Tracing end-to-end + Score API para el evaluador. |
+| **FastAPI** | Expone el orquestador por HTTP. |
+| **Pydantic** | Schema de clasificación estructurada y modelos de la API. |
+| **Docker / Docker Compose** | Entorno de desarrollo — no hace falta Python ni venv local. |
 
 ## Setup
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate            # Windows
-pip install -r requirements.txt
-cp .env.example .env
+cp .env.example .env              # completar OPENAI_API_KEY como mínimo
+docker compose up --build
 ```
+
+La API queda en `http://localhost:8080`, con reload automático.
 
 Completar en `.env`:
 
@@ -175,24 +39,7 @@ Completar en `.env`:
 | `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` | Keys de tu proyecto en [cloud.langfuse.com](https://cloud.langfuse.com) (cuenta gratuita) | — (sin esto, tracing se desactiva solo) |
 | `LANGFUSE_BASE_URL` | Región de Langfuse Cloud | `https://cloud.langfuse.com` |
 
-## Uso
-
-**Notebook** (`multi_agent_system.ipynb`) — correr las celdas en orden, 6 secciones:
-setup → carga de vector stores → definición de agentes → orquestador y enrutamiento →
-pruebas (`test_queries.json`, 21 casos) → integración con Langfuse. Kernel: el `.venv` del
-proyecto.
-
-**Scripts** (útiles para probar sin notebook):
-
-| Script | Para qué sirve |
-|---|---|
-| `01_ingest.py` | Fuerza la ingesta de las 3 knowledge bases a Chroma (si ya están indexadas, no hace nada). |
-| `02_query.py "<pregunta>"` | Consulta puntual al orquestador completo, imprime JSON. |
-| `03_evaluate.py "<pregunta>"` | Igual que `02_query`, + evaluación LLM-as-judge. |
-| `05_test_routing.py` | Corre `test_queries.json` completo (21 casos) contra el orquestador, con desglose por categoría. |
-| `04_serve.py` | Levanta la API FastAPI en `:8000`. |
-
-**API** (`python scripts/04_serve.py`, docs interactivas en `/docs`):
+## Endpoints
 
 | Endpoint | Qué hace |
 |---|---|
@@ -200,50 +47,14 @@ proyecto.
 | `POST /api/evaluate` | Igual que `/query` + score del LLM-as-judge (empujado a Langfuse) |
 | `POST /api/ingest` | Agrega documentos a un dominio |
 | `GET /api/health` | Chunks indexados por colección |
+| `GET /docs` | Swagger UI (autogenerado por FastAPI) |
+| `GET /scalar` | Scalar — UI alternativa a Swagger, con un cliente "try it out" al estilo Postman |
 
-## Producción y notas operativas
+## Scripts y notebook
 
-- **Chroma** (`.chroma/`, en la raíz del proyecto) y **logs** (`logs/moderation_events.jsonl`)
-  se resuelven siempre contra la raíz del repo (`factory.py::_resolve`), nunca contra el
-  directorio desde donde arrancaste el proceso — así el mismo archivo se usa sin importar si
-  lanzás el servidor desde la raíz o desde `src/`.
-- **Para producción**: `.chroma/` es un directorio local en disco — no sirve tal cual para
-  múltiples réplicas/contenedores sin un volumen compartido. A esa escala conviene un Chroma
-  en modo cliente-servidor (o un vector store gestionado) en vez del `PersistentClient` local
-  que usa `ChromaStore` hoy.
-- **Logs de moderación**: hoy son un `.jsonl` en disco (ver capas de seguridad, arriba). En
-  producción conviene mandarlos a un sistema centralizado (no un archivo local por instancia)
-  para que la auditoría sobreviva a un restart/redeploy.
-- **Langfuse**: ver flujo #3 más arriba — tracing es asíncrono (batch en background thread),
-  no bloquea el request; si no hay credenciales, se desactiva solo.
+`scripts/*.py` corren dentro del container (`docker compose exec app python scripts/...`):
+`01_ingest`, `02_query "<pregunta>"`, `03_evaluate "<pregunta>"`, `05_test_routing` (corre
+`test_queries.json`, 21 casos, contra el orquestador).
 
-## Estructura de directorios
-
-```
-├── multi_agent_system.ipynb
-├── test_queries.json          ← 21 casos (12 domain + 3 out_of_scope + 2 ambiguous + 4 moderation)
-├── data/{hr,tech,finance}_docs/
-├── logs/moderation_events.jsonl   (auto-generado)
-├── docs/DECISIONS.md          ← ADRs (el "por qué" de cada decisión técnica)
-├── src/
-│   ├── domain/     modelos, ModerationAction, excepciones
-│   ├── ports/      Protocols (Embedder, VectorStore, LLMClient, LogRepository)
-│   ├── adapters/   OpenAI, Chroma, FAISS, TextLoader, JsonLog, tracing (Langfuse)
-│   ├── services/   Chunker, Indexer, Retriever, RAGPipeline, ModerationService, evaluator
-│   ├── agents/     hr_agent.py, tech_agent.py, finance_agent.py, orchestrator.py, base.py
-│   ├── api/        FastAPI app + routes (query, evaluate, ingest, health)
-│   └── factory.py
-└── scripts/        01_ingest, 02_query, 03_evaluate, 04_serve, 05_test_routing
-```
-
-## Limitaciones conocidas
-
-- **Ingesta no incremental**: si editás un `.txt` después del primer uso, no se re-embebe
-  solo — hay que borrar `.chroma/` y volver a ingestar. Tampoco hay upsert idempotente
-  (correr la ingesta dos veces duplica contenido).
-- **FAISS no migrado a LangChain**: sigue siendo un adapter válido del mismo port, pero no
-  se usa en el flujo multi-agente actual (ADR-005).
-- **Sin memoria conversacional**: cada pregunta se procesa de forma independiente.
-- **Routing single-hop**: el orquestador elige un único dominio por pregunta; una consulta
-  genuinamente compuesta entre dos dominios no se divide ni se responde con múltiples
-  agentes (ver casos `amb-01`/`amb-02` en `test_queries.json`).
+`multi_agent_system.ipynb` necesita un entorno Python local (`pip install -r
+requirements.txt`) — Jupyter no corre dentro del container.
