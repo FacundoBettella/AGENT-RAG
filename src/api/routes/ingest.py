@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 
-from api.schemas import IngestRequest, IngestResponse
+from api.schemas import IngestRequest, IngestResponse, IngestResult
 
 router = APIRouter()
 
@@ -13,11 +13,11 @@ def post_ingest(body: IngestRequest, request: Request) -> IngestResponse:
         raise HTTPException(status_code=400, detail=f"Dominio desconocido: {body.domain}")
 
     chunks_indexed = agent.ingest_texts(body.documents)
-    return {
-        "ingest_result": {
-            "domain": body.domain,
-            "documents_received": len(body.documents),
-            "chunks_indexed": chunks_indexed,
-            "total_in_store": agent.count(),
-        }
-    }
+    return IngestResponse(
+        ingest_result=IngestResult(
+            domain=body.domain,
+            documents_received=len(body.documents),
+            chunks_indexed=chunks_indexed,
+            total_in_store=agent.count(),
+        )
+    )

@@ -17,11 +17,13 @@ Uso:
     python scripts/05_test_routing.py
 """
 
+import io
 import json
 import sys
 from pathlib import Path
 
-sys.stdout.reconfigure(encoding="utf-8")
+if isinstance(sys.stdout, io.TextIOWrapper):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from dotenv import load_dotenv
 

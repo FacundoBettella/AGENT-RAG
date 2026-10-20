@@ -1,5 +1,6 @@
 import pickle
 from pathlib import Path
+from typing import cast
 
 import faiss
 import numpy as np
@@ -65,7 +66,7 @@ class FAISSStore:
     # Internals
     # ------------------------------------------------------------------
 
-    def _build_index(self, dim: int) -> faiss.Index:
+    def _build_index(self, dim: int) -> faiss.IndexHNSWFlat:
         # METRIC_INNER_PRODUCT + L2-normalized vectors = cosine similarity
         index = faiss.IndexHNSWFlat(dim, self._hnsw_m, faiss.METRIC_INNER_PRODUCT)
         index.hnsw.efConstruction = self._ef_construction
@@ -78,6 +79,8 @@ class FAISSStore:
         return vectors
 
     def _save(self) -> None:
+        if self._index is None:
+            return
         self._persist_path.mkdir(parents=True, exist_ok=True)
         faiss.write_index(self._index, str(self._persist_path / "index.faiss"))
         with open(self._persist_path / "chunks.pkl", "wb") as f:
@@ -87,7 +90,11 @@ class FAISSStore:
         index_file = self._persist_path / "index.faiss"
         chunks_file = self._persist_path / "chunks.pkl"
         if index_file.exists() and chunks_file.exists():
-            self._index = faiss.read_index(str(index_file))
-            self._index.hnsw.efSearch = self._ef_search
+            index = faiss.read_index(str(index_file))
+            # faiss stubs type read_index/downcast_index as the base Index,
+            # but a persisted HNSW index is an IndexHNSWFlat (has .hnsw).
+            hnsw_index = cast(faiss.IndexHNSWFlat, faiss.downcast_index(index))
+            hnsw_index.hnsw.efSearch = self._ef_search
+            self._index = index
             with open(chunks_file, "rb") as f:
                 self._chunks = pickle.load(f)

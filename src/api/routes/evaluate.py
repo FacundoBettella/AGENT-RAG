@@ -31,4 +31,4 @@ def post_evaluate(body: QuestionRequest, request: Request) -> EvaluateResponse:
     eval_result = response.to_dict()
     eval_result["intent"] = result.intent
     eval_result["evaluation"] = evaluation
-    return {"evaluate_result": eval_result}
+    return EvaluateResponse.model_validate({"evaluate_result": eval_result})

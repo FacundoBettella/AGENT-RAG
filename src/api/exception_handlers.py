@@ -1,3 +1,5 @@
+from typing import cast
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -5,15 +7,21 @@ from fastapi.responses import JSONResponse
 from domain.exceptions import ContentBlockedError
 
 
-async def content_blocked_handler(_request: Request, exc: ContentBlockedError) -> JSONResponse:
-    return JSONResponse(status_code=400, content={"error": exc.reason})
+# Starlette's add_exception_handler types handlers as (Request, Exception),
+# so each handler takes a plain Exception and narrows it with cast(): the
+# framework only dispatches the registered exception class to each handler.
 
 
-async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONResponse:
-    return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
+async def content_blocked_handler(_request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(status_code=400, content={"error": cast(ContentBlockedError, exc).reason})
 
 
-async def validation_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
+async def http_exception_handler(_request: Request, exc: Exception) -> JSONResponse:
+    http_exc = cast(HTTPException, exc)
+    return JSONResponse(status_code=http_exc.status_code, content={"error": http_exc.detail})
+
+
+async def validation_handler(_request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(status_code=422, content={"error": str(exc)})
 
 

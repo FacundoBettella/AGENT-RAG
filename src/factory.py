@@ -10,6 +10,7 @@ from adapters.json_log import JsonLogRepository
 from adapters.openai_embedder import OpenAIEmbedder
 from adapters.openai_llm import OpenAILLMClient
 from adapters.text_loader import TextLoader
+from ports.vector_store import VectorStore
 from services.chunker import Chunker
 from services.indexer import Indexer
 from services.moderation_service import ModerationEvaluator, ModerationService
@@ -74,6 +75,7 @@ def build_faq_bundle(
 
     embedder = OpenAIEmbedder(model=embedding_model, api_key=api_key)
 
+    store: VectorStore
     if vector_store == "faiss":
         from adapters.faiss_store import FAISSStore
         store = FAISSStore(embedder=embedder, persist_path=_resolve(f".faiss/{collection_name}"))

@@ -9,10 +9,12 @@ Uso:
     python scripts/01_ingest.py
 """
 
+import io
 import sys
 from pathlib import Path
 
-sys.stdout.reconfigure(encoding="utf-8")
+if isinstance(sys.stdout, io.TextIOWrapper):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from dotenv import load_dotenv
 

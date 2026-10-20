@@ -9,10 +9,12 @@ router = APIRouter()
 def post_query(body: QuestionRequest, request: Request) -> QueryResponse:
     orchestrator = request.app.state.orchestrator
     result = orchestrator.handle(body.question)
-    return {
-        "query_result": {
-            **result.rag_response.to_dict(),
-            "intent": result.intent,
-            "reasoning": result.reasoning,
+    return QueryResponse.model_validate(
+        {
+            "query_result": {
+                **result.rag_response.to_dict(),
+                "intent": result.intent,
+                "reasoning": result.reasoning,
+            }
         }
-    }
+    )
