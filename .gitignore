@@ -6,3 +6,12 @@ logs/
 .chroma/
 .chroma_*/
 .faiss/
+init.sh
+.eynstein-version
+AGENTS.md
+CHECKPOINTS.md
+docs/
+profiles/
+progress/*
+!progress/dev-report.md
+CLAUDE.md.bak

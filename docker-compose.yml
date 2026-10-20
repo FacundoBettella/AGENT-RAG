@@ -1,24 +1,19 @@
 name: agent-rag
 
 services:
-  app:
+  dev:
     build:
       context: .
-      dockerfile: Dockerfile
+      # Dockerfile.dev = production deps + pytest/ruff/mypy, so the eynstein
+      # harness (profiles/active/test.sh) can run the suite inside this service
+      dockerfile: Dockerfile.dev
     env_file:
       - .env
     ports:
       - "8000:8000"
+    working_dir: /app
+    # whole repo mounted: the harness runs profiles/active/test.sh from /app,
+    # and it still covers src/, data/, scripts/, test_queries.json and keeps
+    # .chroma/ and logs/ persisted across `docker compose down`
     volumes:
-      - ./src:/app/src
-      - ./data:/app/data
-      # persisted so the vector store / audit log survive `docker compose down`
-      # instead of re-embedding the knowledge base and losing moderation
-      # history on every restart
-      - ./.chroma:/app/.chroma
-      - ./logs:/app/logs
-      # not needed to serve the API, but lets `docker compose exec app python
-      # scripts/...` replace the old venv-based workflow for scripts/*.py
-      - ./scripts:/app/scripts
-      - ./test_queries.json:/app/test_queries.json
-    command: uvicorn api.main:app --app-dir src --host 0.0.0.0 --port 8000 --reload
+      - .:/app

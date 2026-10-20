@@ -1,0 +1,31 @@
+{
+  "project": "RAG Agent API",
+  "description": "",
+  "rules": {
+    "team_mode": false,
+    "max_in_progress_per_owner": 1,
+    "require_tests_to_close": true,
+    "require_approved_spec_to_implement": true,
+    "valid_status": [
+      "pending",
+      "spec_ready",
+      "in_progress",
+      "done",
+      "blocked"
+    ],
+    "sdd_required_when": "feature has \"sdd\": true"
+  },
+  "features": [
+    {
+      "id": 1,
+      "name": "answer-feedback",
+      "title": "Feedback del usuario sobre las respuestas",
+      "description": "Un endpoint que reciba si una respuesta de /api/query le fue útil o no al usuario, y registre ese voto en Langfuse junto a la traza de esa consulta. Lo va a consumir el chat de RR.HH. del frontend.",
+      "owner": "Facundo Bettella",
+      "sdd": true,
+      "mode": "tdd",
+      "status": "pending",
+      "measure": true
+    }
+  ]
+}
