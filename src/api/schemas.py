@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 Domain = Literal["hr", "tech", "finance"]
 
@@ -27,6 +27,7 @@ class QueryResult(BaseModel):
     chunks_related: list[ChunkOut]
     intent: str
     reasoning: str
+    trace_id: str | None
 
 
 class QueryResponse(BaseModel):
@@ -72,3 +73,17 @@ class EvaluateResult(BaseModel):
 
 class EvaluateResponse(BaseModel):
     evaluate_result: EvaluateResult
+
+
+class FeedbackRequest(BaseModel):
+    trace_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    helpful: bool
+
+
+class FeedbackResult(BaseModel):
+    trace_id: str
+    helpful: bool
+
+
+class FeedbackResponse(BaseModel):
+    feedback_result: FeedbackResult

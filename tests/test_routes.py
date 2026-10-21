@@ -3,7 +3,11 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from api.main import app
 from api.routes import evaluate
+from conftest import FakeOrchestrator
+
+TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736"
 
 CHUNK_JSON = {
     "content": "Las vacaciones se solicitan en el portal.",
@@ -30,8 +34,27 @@ def test_query_returns_query_result_shape(client: TestClient) -> None:
             "chunks_related": [CHUNK_JSON],
             "intent": "hr",
             "reasoning": "habla de vacaciones",
+            "trace_id": "trace-1",
         }
     }
+
+
+def test_query_returns_trace_id_when_tracing_is_enabled(client: TestClient) -> None:
+    app.state.orchestrator = FakeOrchestrator(trace_id=TRACE_ID)
+
+    response = client.post("/api/query", json={"question": "¿Cómo pido vacaciones?"})
+
+    assert response.status_code == 200
+    assert response.json()["query_result"]["trace_id"] == TRACE_ID
+
+
+def test_query_returns_null_trace_id_when_tracing_is_disabled(client: TestClient) -> None:
+    app.state.orchestrator = FakeOrchestrator(trace_id=None)
+
+    response = client.post("/api/query", json={"question": "¿Cómo pido vacaciones?"})
+
+    assert response.status_code == 200
+    assert response.json()["query_result"]["trace_id"] is None
 
 
 def test_ingest_returns_ingest_result_shape(client: TestClient, agents: dict[str, Any]) -> None:

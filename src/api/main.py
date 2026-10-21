@@ -10,7 +10,7 @@ load_dotenv()
 from agents import finance_agent, hr_agent, tech_agent
 from agents.orchestrator import build_orchestrator
 from api.exception_handlers import register_handlers
-from api.routes import evaluate, health, ingest, query
+from api.routes import evaluate, feedback, health, ingest, query
 
 
 @asynccontextmanager
@@ -46,6 +46,7 @@ app.include_router(health.router, prefix="/api")
 app.include_router(query.router, prefix="/api")
 app.include_router(ingest.router, prefix="/api")
 app.include_router(evaluate.router, prefix="/api")
+app.include_router(feedback.router, prefix="/api")
 
 register_handlers(app)
 

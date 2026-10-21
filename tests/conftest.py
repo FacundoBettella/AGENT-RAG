@@ -32,13 +32,14 @@ class FakeOrchestratorResult:
 
 
 class FakeOrchestrator:
-    def __init__(self, error: Exception | None = None) -> None:
+    def __init__(self, error: Exception | None = None, trace_id: str | None = "trace-1") -> None:
         self._error = error
+        self._trace_id = trace_id
 
     def handle(self, question: str) -> FakeOrchestratorResult:
         if self._error is not None:
             raise self._error
-        return FakeOrchestratorResult(rag_response=make_rag_response())
+        return FakeOrchestratorResult(rag_response=make_rag_response(), trace_id=self._trace_id)
 
 
 @dataclass

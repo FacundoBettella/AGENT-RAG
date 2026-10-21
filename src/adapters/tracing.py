@@ -10,6 +10,8 @@ run-id bookkeeping and concurrent requests shouldn't share that state.
 
 from __future__ import annotations
 
+import os
+
 from langfuse import get_client
 from langfuse.langchain import CallbackHandler
 
@@ -33,4 +35,24 @@ def push_evaluation_score(trace_id: str | None, eval_result: dict) -> None:
         data_type="NUMERIC",
         value=eval_result["score"],
         comment=eval_result.get("justificacion"),
+    )
+
+
+def is_tracing_enabled() -> bool:
+    """Whether Langfuse will actually record anything: both API keys are set
+    and tracing wasn't switched off via LANGFUSE_TRACING_ENABLED=false. The
+    SDK has no public flag for this, so mirror the conditions it checks.
+    """
+    if os.environ.get("LANGFUSE_TRACING_ENABLED", "true").lower() == "false":
+        return False
+    return bool(os.environ.get("LANGFUSE_PUBLIC_KEY") and os.environ.get("LANGFUSE_SECRET_KEY"))
+
+
+def push_user_feedback(trace_id: str, helpful: bool) -> None:
+    get_client().create_score(
+        trace_id=trace_id,
+        name="user_feedback",
+        data_type="BOOLEAN",
+        value=int(helpful),
+        score_id=f"user_feedback-{trace_id}",
     )

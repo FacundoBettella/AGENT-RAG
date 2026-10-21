@@ -15,6 +15,7 @@ def post_query(body: QuestionRequest, request: Request) -> QueryResponse:
                 **result.rag_response.to_dict(),
                 "intent": result.intent,
                 "reasoning": result.reasoning,
+                "trace_id": result.trace_id,
             }
         }
     )
